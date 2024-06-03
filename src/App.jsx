@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import Board from './components/Board';
 import './App.scss';
+import NavBar from './components/NavBar';
 
 const App = () => {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
   const [scores, setScores] = useState({ X: 0, O: 0 });
+  const [startingPlayer, setStartingPlayer] = useState('X');
+
+  const handlePlayerChange = (event) => {
+    setStartingPlayer(event.target.value);
+  };
 
   const handleClick = (index) => {
     if (calculateWinner(squares) || squares[index]) {
@@ -41,9 +47,19 @@ const App = () => {
 
   return (
     <div className={`game ${winner ? 'rainbow-background' : ''}`}>
+      <NavBar/>
         <div className='scoreboard'>
           <div>X: {scores.X}</div>
           <div>O: {scores.O}</div>
+        </div>
+        <div>
+          <label>
+            Starting Player:
+            <select value={startingPlayer} onChange={handlePlayerChange}>
+              <option value="X">X</option>
+              <option value="O">O</option>
+            </select>
+          </label>
         </div>
         <button className='reset' onClick={handleReset}>Reset</button>
       <div className="game-board">

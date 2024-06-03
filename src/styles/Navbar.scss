@@ -1,0 +1,17 @@
+.navbar{
+    font-size: larger;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    color: white;
+
+    ul{
+        cursor: pointer;
+        gap: 10px;
+        display: flex;
+        list-style-type: none;
+    }
+    
+}
