@@ -1,0 +1,9 @@
+import React from 'react'
+
+const Home = () => {
+  return (
+    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Error amet beatae sapiente possimus odio atque nam consectetur, ipsum et culpa placeat adipisci excepturi, ab praesentium? Perspiciatis, consequuntur non quo sed dolor dignissimos architecto beatae deleniti similique odit! Quis debitis necessitatibus possimus accusantium odit magni, quas nostrum consequatur veniam tempora dicta. Cum, magnam. Ipsam distinctio fugiat sit tenetur deserunt officiis iure deleniti assumenda similique at velit corrupti placeat, eius tempora quod, nostrum et fugit. Voluptatum soluta culpa odio minus quis amet repellendus temporibus porro consectetur, veritatis hic. Hic asperiores nemo consequatur? Consequuntur hic quidem facere iusto esse at quam commodi mollitia distinctio error, doloremque, ullam odio, eius obcaecati voluptatem sint. Ducimus itaque velit rerum earum eos vero eveniet, ab laboriosam sint. Eligendi aspernatur, exercitationem mollitia facilis hic eum, sequi commodi et amet doloremque earum, laboriosam sapiente ad dolorum? Culpa obcaecati quidem iusto sunt esse magni, officiis mollitia? Optio eos amet corporis consequatur libero sit quisquam totam dignissimos? Cupiditate voluptas distinctio expedita fugiat totam nemo, iure ducimus odio. Necessitatibus sequi dolores rerum repudiandae, nihil incidunt amet eius maiores officiis laborum repellat perferendis delectus, quibusdam, rem aut voluptatum placeat. Praesentium consequuntur culpa quam veritatis placeat. Fugit omnis ad earum, doloremque reiciendis perspiciatis architecto.</div>
+  )
+}
+
+export default Home
