@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Board from '../components/Board';
+import Board from '../components/Board.jsx';
+import '../styles/TicTacToe.scss'
 
 const TicTacToe = () => {
     const [squares, setSquares] = useState(Array(9).fill(null));
@@ -7,21 +8,24 @@ const TicTacToe = () => {
     const [scores, setScores] = useState({ X: 0, O: 0 });
   
     const handlePlayerChange = (event) => {
-      if(event=='X')
-        setXIsNext(true)
-      else
-        setXIsNext(false)
-      
+      event=='X'? setXIsNext(true) : setXIsNext(false)
     };
   
     const handleClick = (index) => {
       if (calculateWinner(squares) || squares[index]) {
         return;
       }
+      
       const newSquares = squares.slice();
       newSquares[index] = xIsNext ? 'X' : 'O';
       setSquares(newSquares);
       setXIsNext(!xIsNext);
+      
+      const nullCount = squares.filter(item => item === null).length;
+
+      if (nullCount === 1) {
+          handleReset();
+      }
     };
   
     const handleReset = () => {
@@ -40,10 +44,8 @@ const TicTacToe = () => {
       }, 4000); 
     }
   
-    const status = winner
-      ? `Congrats ${winner}`
-      : `Next player: ${xIsNext ? 'X' : 'O'}`;
-      const turnClass = xIsNext ? 'x-turn' : 'o-turn';
+    const status = winner ? `Congrats ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
+    const turnClass = xIsNext ? 'x-turn' : 'o-turn';
   
     return (
       <div className={`game ${winner ? 'rainbow-background' : ''}`}>

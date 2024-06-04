@@ -31,9 +31,15 @@
         }
     }
     ul{
-        gap: 10px;
+        gap: 30px;
         display: flex;
         list-style-type: none;
+    }
+
+    @media (max-width:750px) {
+       
+       
+       
     }
     
 }
