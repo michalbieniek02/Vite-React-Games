@@ -63,6 +63,7 @@ const MemoryGame = () => {
 
   return (
     <div className="memory-game-container">
+      <Stopwatch start={startTime} />
       <div className="memory-game">
         {grid.map((cell, index) => (
           <div
@@ -74,7 +75,6 @@ const MemoryGame = () => {
           </div>
         ))}
       </div>
-      <Stopwatch start={startTime} />
     </div>
   );
 };

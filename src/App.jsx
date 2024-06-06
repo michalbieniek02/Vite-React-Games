@@ -1,5 +1,5 @@
-import './App.scss';
 import Footer from './components/Footer';
+import MobileFooter from './components/MobileFooter';
 import NavBar from './components/NavBar';
 import Home from './sites/Home';
 import MemoryGame from './sites/MemoryGame';
@@ -14,6 +14,7 @@ const App = () => {
       <Route path="/tic-tac-toe" element={<TicTacToe/>}/>
       <Route path="memory" element={<MemoryGame/>}/>
     </Routes>
+    <MobileFooter/>
     <Footer/>
     </>
   )

@@ -9,8 +9,6 @@ const NavBar = () => {
     console.log(isOpen);
   };
 
-
-
   return (
     <>
       <nav className='navbar'>

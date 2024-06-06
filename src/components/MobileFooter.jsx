@@ -1,10 +1,10 @@
 import React from 'react'
-
+import '../styles/MobileFooter.scss'
 const MobileFooter = () => {
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <p>&copy; 2023 Your Company</p>
+    <footer className="mobile-footer">
+      <div className="mobile-footer-content">
+        <p>&copy; 2024 React Gaming Company</p>
       </div>
     </footer>
   )

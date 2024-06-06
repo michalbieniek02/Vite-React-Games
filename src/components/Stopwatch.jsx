@@ -19,12 +19,12 @@ const Stopwatch = ({ start }) => {
   const milliseconds = elapsedTime % 100;
 
   return (
-    <div className="stopwatch">
-      <p className="stopwatch-time">
+    <div className="stopwatch" style={{justifyContent:'center',marginTop:'40px',fontSize:'20px'}}>
+      
         {hours}:{minutes.toString().padStart(2, "0")}:
         {seconds.toString().padStart(2, "0")}:
         {milliseconds.toString().padStart(2, "0")}
-      </p>
+      
     </div>
   );
 };

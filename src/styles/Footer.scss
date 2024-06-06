@@ -4,4 +4,21 @@
     background-color: black;
     color: rgb(192, 192, 192);
     padding: 30px;
+
+    .left-section{
+        display: list-item;
+        list-style-type: none;
+        margin-right: 50px;
+    }
+
+    .socials{
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+    }
+}
+@media (max-width:750px) {
+    .footer{
+        display: none;
+    }
 }
