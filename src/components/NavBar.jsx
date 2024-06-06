@@ -6,28 +6,37 @@ const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+    console.log(isOpen);
   };
 
 
 
   return (
-    <nav className='navbar'>
-        React Games 
-        <div className='nav-content' >
-          <ul className={`navbar-links ${isOpen ? 'open' : ''}`}>
-            <li className='nav-link'>
-              <Link to="/">Home</Link>
-            </li>
-            <li className='nav-link'>
-              <Link to="/tic-tac-toe">Tic Tac Toe</Link>
-            </li>
-            <li className='nav-link'>
-              <Link to="/memory">Memory</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="navbar-toggle" onClick={toggleMenu}>☰</div>
-    </nav>
+    <>
+      <nav className='navbar'>
+          <p className='nav-title'>React Games</p>
+          <div className='nav-content' >
+            <ul className={`navbar-links ${isOpen ? 'open' : ''}`}>
+              <li className='nav-link'>
+                <Link to="/">Home</Link>
+              </li>
+              <li className='nav-link'>
+                <Link to="/tic-tac-toe">Tic Tac Toe</Link>
+              </li>
+              <li className='nav-link'>
+                <Link to="/memory">Memory</Link>
+              </li>
+            </ul>
+          </div>
+          <div className="nav-toggle" onClick={toggleMenu}>☰</div>
+      </nav>
+      {isOpen?
+      <div className='mobile-nav-content'>
+        <Link to="/">Home</Link>
+        <Link to="/tic-tac-toe">Tic Tac Toe</Link>
+        <Link to="/memory">Memory</Link>
+      </div> : ''}
+    </>
   )
 }
 

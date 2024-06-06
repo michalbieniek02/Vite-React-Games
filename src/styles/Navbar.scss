@@ -11,6 +11,13 @@
     .nav-content{
         margin-left: 20%;
     }
+    .nav-toggle{
+        cursor: pointer;
+        display: none;
+        margin-left: 30px;
+        font-size:44px;
+        transform: translateY(-4px);
+    }
 
     .nav-link{        
         a {
@@ -36,9 +43,16 @@
         list-style-type: none;
     }
 
-    @media (max-width:750px) {
-       
-       
+    @media (max-width:790px) {
+        .nav-toggle{
+            display: block;
+        }
+        .nav-title{
+            margin-left: 20px;
+        }
+        .nav-content{
+            display: none;
+        }
        
     }
     

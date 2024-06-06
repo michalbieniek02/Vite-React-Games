@@ -1,0 +1,38 @@
+.memory-game {
+    display: grid;
+    grid-template-columns: repeat(6, 80px);
+    grid-template-rows: repeat(6, 80px);
+    gap: 10px;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  
+  .cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #333;
+    background-color: #f0f0f0;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .cell.revealed {
+    background-color: #fff;
+    cursor: default;
+  }
+  .stopwatch{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width:580px) {
+    .memory-game{
+        display: flex;
+        flex-wrap: wrap;
+    }
+  }
