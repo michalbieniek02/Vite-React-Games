@@ -19,6 +19,7 @@ const MemoryGame = () => {
   const [grid, setGrid] = useState(generateGrid);
   const [selected, setSelected] = useState([]);
   const [startTime, setStartTime] = useState(false);
+  const [gameCompleted, setGameCompleted] = useState(false);
 
   useEffect(() => {
     if (selected.length === 2) {
@@ -42,12 +43,19 @@ const MemoryGame = () => {
           );
         }, 1000);
       }
-      setTimeout(() => setSelected([]), 1); 
+      setTimeout(() => setSelected([]), 10); 
     }
   }, [selected, grid]);
 
+  useEffect(() => {
+    if (grid.every(cell => cell.matched)) {
+      setGameCompleted(true);
+      setStartTime(false);
+    }
+  }, [grid]);
+
   const handleClick = (index) => {
-    if (!startTime) {
+    if (!startTime && !gameCompleted) {
       setStartTime(true);
     }
 
@@ -61,9 +69,16 @@ const MemoryGame = () => {
     }
   };
 
+  const resetGame = () => {
+    setGrid(generateGrid());
+    setSelected([]);
+    setStartTime(false);
+    setGameCompleted(false);
+  };
+
   return (
     <div className="memory-game-container">
-      <Stopwatch start={startTime} />
+      <Stopwatch start={startTime} stop={gameCompleted} />
       <div className="memory-game">
         {grid.map((cell, index) => (
           <div
@@ -75,6 +90,11 @@ const MemoryGame = () => {
           </div>
         ))}
       </div>
+      {gameCompleted && (
+        <button className="reset-button" onClick={resetGame}>
+          Reset Game
+        </button>
+      )}
     </div>
   );
 };

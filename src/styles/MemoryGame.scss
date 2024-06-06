@@ -1,10 +1,16 @@
-.memory-game {
+.memory-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .memory-game {
     display: grid;
     grid-template-columns: repeat(6, 80px);
     grid-template-rows: repeat(6, 80px);
     gap: 10px;
     justify-content: center;
-    margin-top: 50px;
   }
   
   .cell {
@@ -24,11 +30,19 @@
     background-color: #fff;
     cursor: default;
   }
-  .stopwatch{
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
+  
+  .stopwatch {
+    margin: 50px;
+    font-size: 32px;
   }
+  
+  .reset-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
 
   @media (max-width:580px) {
     .memory-game{
