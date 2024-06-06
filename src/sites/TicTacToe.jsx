@@ -57,7 +57,7 @@ const TicTacToe = () => {
                 <div>X: {scores.X}</div>
                 <div>O: {scores.O}</div>
             </div>
-            <div>
+            <div className='starting-player'>
                 <label>
                     Starting Player:
                     <select onChange={handlePlayerChange}>
