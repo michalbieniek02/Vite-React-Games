@@ -20,7 +20,6 @@ const MemoryGame = () => {
   const [selected, setSelected] = useState([]);
   const [startTime, setStartTime] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
-  const [gameReset, setGameReset] = useState(false);
 
   useEffect(() => {
     if (selected.length === 2) {
@@ -75,12 +74,11 @@ const MemoryGame = () => {
     setSelected([]);
     setStartTime(false);
     setGameCompleted(false);
-    setGameReset(true)
   };
 
   return (
     <div className="memory-game-container">
-      <Stopwatch start={startTime} stop={gameCompleted} reset={gameReset} />
+      <Stopwatch start={startTime} stop={gameCompleted} />
       <div className="memory-game">
         {grid.map((cell, index) => (
           <div
