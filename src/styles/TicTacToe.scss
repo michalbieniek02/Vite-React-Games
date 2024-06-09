@@ -1,11 +1,12 @@
 .game {
-  
+    transition-duration: 2s;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   
   .game-board {
+    margin-top: 20px;
     margin-bottom: 20px;
   }
   

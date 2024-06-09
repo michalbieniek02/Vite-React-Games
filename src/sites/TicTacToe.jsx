@@ -6,9 +6,15 @@ const TicTacToe = () => {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
     const [scores, setScores] = useState({ X: 0, O: 0 });
+    const [selectVisible, setSelectVisible] = useState(true);
+
+    const handleSelectChange = () => {
+        setSelectVisible(false);
+      };
 
     const handlePlayerChange = (event) => {
         setXIsNext(event.target.value === 'X');
+        handleSelectChange()
     };
 
     const handleClick = (index) => {
@@ -22,10 +28,14 @@ const TicTacToe = () => {
         setXIsNext(!xIsNext);
     };
 
+
     const handleReset = () => {
         setSquares(Array(9).fill(null));
+        setSelectVisible(true)
     };
 
+    
+    
     useEffect(() => {
         const winner = calculateWinner(squares);
         if (winner) {
@@ -57,6 +67,7 @@ const TicTacToe = () => {
                 <div>X: {scores.X}</div>
                 <div>O: {scores.O}</div>
             </div>
+            {selectVisible && (
             <div className='starting-player'>
                 <label>
                     Starting Player:
@@ -66,6 +77,7 @@ const TicTacToe = () => {
                     </select>
                 </label>
             </div>
+        )}
             <div className="game-board">
                 <Board squares={squares} onClick={handleClick} turn={turnClass} />
             </div>
