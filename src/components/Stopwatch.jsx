@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Stopwatch = ({ start }) => {
+const Stopwatch = ({ start,reset }) => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef(null);
 
@@ -12,7 +12,11 @@ const Stopwatch = ({ start }) => {
     }
     return () => clearInterval(timerRef.current);
   }, [start]);
-
+  
+  if(reset){
+    setElapsedTime(0)
+  }
+  
   const hours = Math.floor(elapsedTime / 360000);
   const minutes = Math.floor((elapsedTime % 360000) / 6000);
   const seconds = Math.floor((elapsedTime % 6000) / 100);
