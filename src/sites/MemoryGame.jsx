@@ -3,7 +3,7 @@ import Stopwatch from '../components/Stopwatch';
 import '../styles/MemoryGame.scss';
 
 const generateGrid = () => {
-  const gridSize = 6;
+  const gridSize = 4;
   const numPairs = (gridSize * gridSize) / 2; 
   const values = Array.from({ length: numPairs }, (_, i) => i + 1).flatMap((n) => [n, n]);
   values.sort(() => Math.random() - 0.5);

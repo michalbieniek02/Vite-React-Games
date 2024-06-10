@@ -26,6 +26,7 @@ const TicTacToe = () => {
         newSquares[index] = xIsNext ? 'X' : 'O';
         setSquares(newSquares);
         setXIsNext(!xIsNext);
+        setSelectVisible(false)
     };
 
 
