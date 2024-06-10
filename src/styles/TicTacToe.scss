@@ -1,105 +1,87 @@
-.game {
-    transition-duration: 2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .game-board {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .board-row {
-    display: flex;
-  }
-  
-  .square {
-    width: 200px;
-    height: 200px;
-    background: #ffffff5c;
-    border: 1px solid #000000;
-    border-radius: 5%;
-    font-size: 24px;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-      .square:focus {
-      outline: none;
-      }
-  }
-  
-  .square.x-turn:hover {
-    border: 2px solid rgb(47, 92, 255);
-  }
-  
-  .square.o-turn:hover {
-    border: 2px solid red;
-  }
-  
-  .game-info {
-    margin-top: 20px;
-  }
-  .reset {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-    border: 1px solid black;
-    border-radius: 5px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 5px 10px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  
-  @keyframes rainbow {
-    0% { background-color: red; }
-    14% { background-color: orange; }
-    28% { background-color: yellow; }
-    42% { background-color: green; }
-    57% { background-color: blue; }
-    71% { background-color: indigo; }
-    85% { background-color: violet; }
-    100% { background-color: red; }
-  }
-  
-  .rainbow-background {
-    animation: rainbow 4s;
-  }
-  
-  .bigger-text{
-    font-size: 48px;
-    transition: ease;
-    transition-duration: 4s;
-  }
-  .scoreboard {
-    display: flex;
-    gap: 10px;
-    background-color: rgba(255, 255, 255, 0.349);
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px 20px;
-    margin-top: 20px;
-    font-size: 18px;
-  }
-  .starting-player{
-    margin: 20px;
-  }
-  
-  @media (max-width:620px) {
-    .square{
-      width: 150px;
-      height: 150px;
-    }
-  }
-  
-  @media (max-width:475px) {
-    .square{
-      width: 90px;
-      height: 90px;
-    }
-  }
+.main-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5vh;
+  flex-direction: column;
+}
+
+.playOnline {
+  font-weight: 700;
+  border: none;
+  background-color: #e4ca56;
+  font-size: 60px;
+  cursor: pointer;
+  margin-top: 20vh;
+  margin-bottom: 30vh;
+  padding: 6px 10px;
+  border-radius: 5px;
+  outline: none;
+}
+
+.water-background {
+  background-color: #000000;
+}
+
+.game-heading {
+  color: white;
+  padding: 5px 20px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 40px;
+}
+
+.square-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 10px;
+  column-gap: 10px;
+}
+
+.move-detection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 400px;
+}
+
+.finished-state {
+  font-size: 30px;
+  text-align: center;
+}
+
+.left,
+.right {
+  height: 30px;
+  width: 120px;
+  background-color: red;
+  color: white;
+  background-color: #000000;
+  border-radius: 10px;
+  padding-top: 7px;
+  font-size: 18px;
+  padding-bottom: 5px;
+  text-align: center;
+}
+
+.waiting {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin: 30vh 0;
+  font-size: 44px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.current-move-cross {
+  background-color: #0033ff !important;
+}
+
+.current-move-circle {
+  background-color: #ff0000 !important;
+}

@@ -1,112 +1,233 @@
-import React, { useState, useEffect } from 'react';
-import Board from '../components/Board.jsx';
+import React, { useState, useEffect } from "react";
+import Square from "../components/Square";
+import { io } from "socket.io-client";
+import Swal from "sweetalert2";
 import '../styles/TicTacToe.scss'
 
+const renderFrom = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+];
+
 const TicTacToe = () => {
-    const [squares, setSquares] = useState(Array(9).fill(null));
-    const [xIsNext, setXIsNext] = useState(true);
-    const [scores, setScores] = useState({ X: 0, O: 0 });
-    const [selectVisible, setSelectVisible] = useState(true);
+  const [gameState, setGameState] = useState(renderFrom);
+  const [currentPlayer, setCurrentPlayer] = useState("circle");
+  const [finishedState, setFinishetState] = useState(false);
+  const [finishedArrayState, setFinishedArrayState] = useState([]);
+  const [playOnline, setPlayOnline] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [playerName, setPlayerName] = useState("");
+  const [opponentName, setOpponentName] = useState(null);
+  const [playingAs, setPlayingAs] = useState(null);
 
-    const handleSelectChange = () => {
-        setSelectVisible(false);
-      };
-
-    const handlePlayerChange = (event) => {
-        setXIsNext(event.target.value === 'X');
-        handleSelectChange()
-    };
-
-    const handleClick = (index) => {
-        if (calculateWinner(squares) || squares[index]) {
-            return;
-        }
-
-        const newSquares = squares.slice();
-        newSquares[index] = xIsNext ? 'X' : 'O';
-        setSquares(newSquares);
-        setXIsNext(!xIsNext);
-        setSelectVisible(false)
-    };
-
-
-    const handleReset = () => {
-        setSquares(Array(9).fill(null));
-        setSelectVisible(true)
-    };
-
-    
-    
-    useEffect(() => {
-        const winner = calculateWinner(squares);
-        if (winner) {
-            setTimeout(() => {
-                setScores(prevScores => ({
-                    ...prevScores,
-                    [winner]: prevScores[winner] + 1
-                }));
-                handleReset();
-            }, 4000);
-        } else {
-            const nullCount = squares.filter(item => item === null).length;
-            if (nullCount === 0) {
-                setTimeout(() => {
-                    handleReset();
-                }, 2000);
-                
-            }
-        }
-    }, [squares]);
-
-    const winner = calculateWinner(squares);
-    const status = winner ? `Congrats ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
-    const turnClass = xIsNext ? 'x-turn' : 'o-turn';
-
-    return (
-        <div className={`game ${winner ? 'rainbow-background' : ''}`}>
-            <div className='scoreboard'>
-                <div>X: {scores.X}</div>
-                <div>O: {scores.O}</div>
-            </div>
-            {selectVisible && (
-            <div className='starting-player'>
-                <label>
-                    Starting Player:
-                    <select onChange={handlePlayerChange}>
-                        <option value="X">X</option>
-                        <option value="O">O</option>
-                    </select>
-                </label>
-            </div>
-        )}
-            <div className="game-board">
-                <Board squares={squares} onClick={handleClick} turn={turnClass} />
-            </div>
-            <div className="game-info">
-                <div className={winner ? 'bigger-text' : ''}>{status}</div>
-            </div>
-        </div>
-    );
-};
-
-const calculateWinner = (squares) => {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
-        }
+  const checkWinner = () => {
+    for (let row = 0; row < gameState.length; row++) {
+      if (
+        gameState[row][0] === gameState[row][1] &&
+        gameState[row][1] === gameState[row][2]
+      ) {
+        setFinishedArrayState([row * 3 + 0, row * 3 + 1, row * 3 + 2]);
+        return gameState[row][0];
+      }
     }
+
+    for (let col = 0; col < gameState.length; col++) {
+      if (
+        gameState[0][col] === gameState[1][col] &&
+        gameState[1][col] === gameState[2][col]
+      ) {
+        setFinishedArrayState([0 * 3 + col, 1 * 3 + col, 2 * 3 + col]);
+        return gameState[0][col];
+      }
+    }
+
+    if (
+      gameState[0][0] === gameState[1][1] &&
+      gameState[1][1] === gameState[2][2]
+    ) {
+      return gameState[0][0];
+    }
+
+    if (
+      gameState[0][2] === gameState[1][1] &&
+      gameState[1][1] === gameState[2][0]
+    ) {
+      return gameState[0][2];
+    }
+
+    const isDrawMatch = gameState.flat().every((e) => {
+      if (e === "circle" || e === "cross") return true;
+    });
+
+    if (isDrawMatch) return "draw";
+
     return null;
+  };
+
+  useEffect(() => {
+    const winner = checkWinner();
+    if (winner) {
+      setFinishetState(winner);
+      setTimeout(()=>resetGame,2000)
+    }
+  }, [gameState]);
+
+  const takePlayerName = async () => {
+    const result = await Swal.fire({
+      title: "Enter your name",
+      input: "text",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to write something!";
+        }
+      },
+    });
+
+    return result;
+  };
+
+  const resetGame = () => {
+    setGameState(renderFrom);
+    setCurrentPlayer("circle");
+    setFinishetState(false);
+    setFinishedArrayState([]);
+    setPlayingAs(null);
+    setOpponentName(null);
+  };
+
+  socket?.on("opponentLeftMatch", () => {
+    setFinishetState("opponentLeftMatch");
+  });
+
+  socket?.on("playerMoveFromServer", (data) => {
+    const id = data.state.id;
+    setGameState((prevState) => {
+      let newState = [...prevState];
+      const rowIndex = Math.floor(id / 3);
+      const colIndex = id % 3;
+      newState[rowIndex][colIndex] = data.state.sign;
+      return newState;
+    });
+    setCurrentPlayer(data.state.sign === "circle" ? "cross" : "circle");
+  });
+
+  socket?.on("connect", function () {
+    setPlayOnline(true);
+  });
+
+  socket?.on("OpponentNotFound", function () {
+    setOpponentName(false);
+  });
+
+  socket?.on("OpponentFound", function (data) {
+    setPlayingAs(data.playingAs);
+    setOpponentName(data.opponentName);
+  });
+
+  async function playOnlineClick() {
+    const result = await takePlayerName();
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const username = result.value;
+    setPlayerName(username);
+
+    const newSocket = io("http://localhost:3000", {
+      autoConnect: true,
+    });
+
+    newSocket?.emit("request_to_play", {
+      playerName: username,
+    });
+
+    setSocket(newSocket);
+  }
+
+  if (!playOnline) {
+    return (
+      <div className="main-div">
+        <button onClick={playOnlineClick} className="playOnline">
+          Play Online
+        </button>
+      </div>
+    );
+  }
+
+  if (playOnline && !opponentName) {
+    return (
+      <div className="waiting">
+        <p>Waiting for opponent</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="main-div">
+      <div className="move-detection">
+        <div
+          className={`left ${
+            currentPlayer === playingAs ? "current-move-" + currentPlayer : ""
+          }`}
+        >
+          {playerName}
+        </div>
+        <div
+          className={`right ${
+            currentPlayer !== playingAs ? "current-move-" + currentPlayer : ""
+          }`}
+        >
+          {opponentName}
+        </div>
+      </div>
+      <div>
+        <h1 className="game-heading water-background">Tic Tac Toe</h1>
+        <div className="square-wrapper">
+          {gameState.map((arr, rowIndex) =>
+            arr.map((e, colIndex) => {
+              return (
+                <Square
+                  socket={socket}
+                  playingAs={playingAs}
+                  gameState={gameState}
+                  finishedArrayState={finishedArrayState}
+                  finishedState={finishedState}
+                  currentPlayer={currentPlayer}
+                  setCurrentPlayer={setCurrentPlayer}
+                  setGameState={setGameState}
+                  id={rowIndex * 3 + colIndex}
+                  key={rowIndex * 3 + colIndex}
+                  currentElement={e}
+                />
+              );
+            })
+          )}
+        </div>
+        {finishedState &&
+          finishedState !== "opponentLeftMatch" &&
+          finishedState !== "draw" && (
+            <h3 className="finished-state">
+              {finishedState === playingAs ? "You " : finishedState} won the
+              game
+            </h3>
+          )}
+        {finishedState &&
+          finishedState !== "opponentLeftMatch" &&
+          finishedState === "draw" && (
+            <h3 className="finished-state">It's a Draw</h3>
+          )}
+      </div>
+      {!finishedState && opponentName && (
+        <h2>You are playing against {opponentName}</h2>
+      )}
+      {finishedState && finishedState === "opponentLeftMatch" && (
+        <h2>You won the match, Opponent has left</h2>
+      )}
+    </div>
+  );
 };
 
 export default TicTacToe;
