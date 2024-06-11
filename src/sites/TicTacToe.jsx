@@ -14,17 +14,14 @@ const renderFrom = [
 const TicTacToe = () => {
   const [gameState, setGameState] = useState(renderFrom);
   const [currentPlayer, setCurrentPlayer] = useState("circle");
-  const [finishedState, setFinishetState] = useState(false);
+  const [finishedState, setFinishedState] = useState(false);
   const [finishedArrayState, setFinishedArrayState] = useState([]);
   const [playOnline, setPlayOnline] = useState(false);
   const [socket, setSocket] = useState(null);
   const [playerName, setPlayerName] = useState("");
   const [opponentName, setOpponentName] = useState(null);
   const [playingAs, setPlayingAs] = useState(null);
-  const navigate = useNavigate()
-
-
- 
+  const navigate = useNavigate();
 
   const checkWinner = () => {
     for (let row = 0; row < gameState.length; row++) {
@@ -51,6 +48,7 @@ const TicTacToe = () => {
       gameState[0][0] === gameState[1][1] &&
       gameState[1][1] === gameState[2][2]
     ) {
+      setFinishedArrayState([0, 4, 8]);
       return gameState[0][0];
     }
 
@@ -58,11 +56,12 @@ const TicTacToe = () => {
       gameState[0][2] === gameState[1][1] &&
       gameState[1][1] === gameState[2][0]
     ) {
+      setFinishedArrayState([2, 4, 6]);
       return gameState[0][2];
     }
 
     const isDrawMatch = gameState.flat().every((e) => {
-      if (e === "circle" || e === "cross") return true;
+      return e === "circle" || e === "cross";
     });
 
     if (isDrawMatch) return "draw";
@@ -70,14 +69,40 @@ const TicTacToe = () => {
     return null;
   };
 
+  useEffect(() => {
+    const winner = checkWinner();
+    if (winner) {
+      setFinishedState(winner);
+      setTimeout(() => {
+        resetGame();
+      }, 2000);
+    }
+  }, [gameState]);
 
+  const resetGame = () => {
+    if (socket) {
+      socket.disconnect();
+    }
+    setGameState(renderFrom);
+    setCurrentPlayer("circle");
+    setFinishedState(false);
+    setFinishedArrayState([]);
+    setPlayOnline(false);
+    setSocket(null);
+    setPlayerName("");
+    setOpponentName(null);
+    setPlayingAs(null);
+    navigate('/tic-tac-toe');
+    location.reload();
+  };
 
   const takePlayerName = async () => {
     const result = await Swal.fire({
       title: "Enter your name",
       input: "text",
       customClass: {
-        container: 'my-swal-container'},
+        container: 'my-swal-container'
+      },
       showCancelButton: true,
       inputValidator: (value) => {
         if (!value) {
@@ -89,36 +114,39 @@ const TicTacToe = () => {
     return result;
   };
 
-
-
-  socket?.on("opponentLeftMatch", () => {
-    setFinishetState("opponentLeftMatch");
-  });
-
-  socket?.on("playerMoveFromServer", (data) => {
-    const id = data.state.id;
-    setGameState((prevState) => {
-      let newState = [...prevState];
-      const rowIndex = Math.floor(id / 3);
-      const colIndex = id % 3;
-      newState[rowIndex][colIndex] = data.state.sign;
-      return newState;
+  const handleSocketEvents = (newSocket) => {
+    newSocket.on("opponentLeftMatch", () => {
+      setFinishedState("opponentLeftMatch");
+      setTimeout(() => {
+        resetGame();
+      }, 2000);
     });
-    setCurrentPlayer(data.state.sign === "circle" ? "cross" : "circle");
-  });
 
-  socket?.on("connect", function () {
-    setPlayOnline(true);
-  });
+    newSocket.on("playerMoveFromServer", (data) => {
+      const id = data.state.id;
+      setGameState((prevState) => {
+        let newState = [...prevState];
+        const rowIndex = Math.floor(id / 3);
+        const colIndex = id % 3;
+        newState[rowIndex][colIndex] = data.state.sign;
+        return newState;
+      });
+      setCurrentPlayer(data.state.sign === "circle" ? "cross" : "circle");
+    });
 
-  socket?.on("OpponentNotFound", function () {
-    setOpponentName(false);
-  });
+    newSocket.on("connect", function () {
+      setPlayOnline(true);
+    });
 
-  socket?.on("OpponentFound", function (data) {
-    setPlayingAs(data.playingAs);
-    setOpponentName(data.opponentName);
-  });
+    newSocket.on("OpponentNotFound", function () {
+      setOpponentName(false);
+    });
+
+    newSocket.on("OpponentFound", function (data) {
+      setPlayingAs(data.playingAs);
+      setOpponentName(data.opponentName);
+    });
+  };
 
   async function playOnlineClick() {
     const result = await takePlayerName();
@@ -134,6 +162,7 @@ const TicTacToe = () => {
       autoConnect: true,
     });
 
+    handleSocketEvents(newSocket);
     newSocket?.emit("request_to_play", {
       playerName: username,
     });
@@ -206,20 +235,19 @@ const TicTacToe = () => {
             <h3 className="finished-state">
               {finishedState === playingAs ? "You " : finishedState} won the
               game
-              {delayedHomeRedirect()}
             </h3>
           )}
         {finishedState &&
           finishedState !== "opponentLeftMatch" &&
           finishedState === "draw" && (
-            <h3 className="finished-state">It's a Draw{delayedHomeRedirect()}</h3>
+            <h3 className="finished-state">It's a Draw</h3>
           )}
       </div>
       {!finishedState && opponentName && (
         <h2>You are playing against {opponentName}</h2>
       )}
       {finishedState && finishedState === "opponentLeftMatch" && (
-        <h2>You won the match, Opponent has left {delayedHomeRedirect()}</h2>
+        <h2>You won the match, Opponent has left </h2>
       )}
     </div>
   );
