@@ -3,6 +3,7 @@ import Square from "../components/Square";
 import { io } from "socket.io-client";
 import Swal from "sweetalert2";
 import '../styles/TicTacToe.scss'
+import { useNavigate } from "react-router-dom";
 
 const renderFrom = [
   [1, 2, 3],
@@ -20,6 +21,10 @@ const TicTacToe = () => {
   const [playerName, setPlayerName] = useState("");
   const [opponentName, setOpponentName] = useState(null);
   const [playingAs, setPlayingAs] = useState(null);
+  const navigate = useNavigate()
+
+
+ 
 
   const checkWinner = () => {
     for (let row = 0; row < gameState.length; row++) {
@@ -65,18 +70,14 @@ const TicTacToe = () => {
     return null;
   };
 
-  useEffect(() => {
-    const winner = checkWinner();
-    if (winner) {
-      setFinishetState(winner);
-      setTimeout(()=>resetGame,2000)
-    }
-  }, [gameState]);
+
 
   const takePlayerName = async () => {
     const result = await Swal.fire({
       title: "Enter your name",
       input: "text",
+      customClass: {
+        container: 'my-swal-container'},
       showCancelButton: true,
       inputValidator: (value) => {
         if (!value) {
@@ -88,14 +89,7 @@ const TicTacToe = () => {
     return result;
   };
 
-  const resetGame = () => {
-    setGameState(renderFrom);
-    setCurrentPlayer("circle");
-    setFinishetState(false);
-    setFinishedArrayState([]);
-    setPlayingAs(null);
-    setOpponentName(null);
-  };
+
 
   socket?.on("opponentLeftMatch", () => {
     setFinishetState("opponentLeftMatch");
@@ -212,19 +206,20 @@ const TicTacToe = () => {
             <h3 className="finished-state">
               {finishedState === playingAs ? "You " : finishedState} won the
               game
+              {delayedHomeRedirect()}
             </h3>
           )}
         {finishedState &&
           finishedState !== "opponentLeftMatch" &&
           finishedState === "draw" && (
-            <h3 className="finished-state">It's a Draw</h3>
+            <h3 className="finished-state">It's a Draw{delayedHomeRedirect()}</h3>
           )}
       </div>
       {!finishedState && opponentName && (
         <h2>You are playing against {opponentName}</h2>
       )}
       {finishedState && finishedState === "opponentLeftMatch" && (
-        <h2>You won the match, Opponent has left</h2>
+        <h2>You won the match, Opponent has left {delayedHomeRedirect()}</h2>
       )}
     </div>
   );
