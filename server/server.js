@@ -3,82 +3,74 @@ const { Server } = require("socket.io");
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
-  cors: "http://localhost:5174/",
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
 });
 
 const allUsers = {};
-const allRooms = [];
 
 io.on("connection", (socket) => {
-  allUsers[socket.id] = {
-    socket: socket,
-    online: true,
-  };
+  socket.on("create_room", (data) => {
+    const roomId = `tic-tac-toe/${socket.id}`;
+    socket.join(roomId);
+    allUsers[socket.id] = {
+      socket: socket,
+      playerName: data.playerName,
+      roomId: roomId,
+      playing: true,
+    };
+    socket.emit("room_created", { roomId: roomId });
+  });
 
-  socket.on("request_to_play", (data) => {
-    const currentUser = allUsers[socket.id];
-    currentUser.playerName = data.playerName;
+  socket.on("join_room", (data) => {
+    const roomId = data.roomId;
+    const room = io.sockets.adapter.rooms.get(roomId);
 
-    let opponentPlayer;
+    if (room && room.size === 1) {
+      socket.join(roomId);
+      const [opponentSocketId] = Array.from(room);
+      const opponentPlayer = allUsers[opponentSocketId];
 
-    for (const key in allUsers) {
-      const user = allUsers[key];
-      if (user.online && !user.playing && socket.id !== key) {
-        opponentPlayer = user;
-        break;
-      }
-    }
+      allUsers[socket.id] = {
+        socket: socket,
+        playerName: data.playerName,
+        roomId: roomId,
+        playing: true,
+      };
 
-    if (opponentPlayer) {
-      allRooms.push({
-        player1: opponentPlayer,
-        player2: currentUser,
+      const currentUser = allUsers[socket.id];
+
+      io.to(roomId).emit("OpponentFound", {
+        player1: {
+          playerName: opponentPlayer.playerName,
+          playingAs: "cross",
+        },
+        player2: {
+          playerName: currentUser.playerName,
+          playingAs: "circle",
+        },
       });
 
-      currentUser.socket.emit("OpponentFound", {
-        opponentName: opponentPlayer.playerName,
-        playingAs: "circle",
+      socket.on("playerMoveFromClient", (moveData) => {
+        socket.to(roomId).emit("playerMoveFromServer", moveData);
       });
 
-      opponentPlayer.socket.emit("OpponentFound", {
-        opponentName: currentUser.playerName,
-        playingAs: "cross",
-      });
-
-      currentUser.socket.on("playerMoveFromClient", (data) => {
-        opponentPlayer.socket.emit("playerMoveFromServer", {
-          ...data,
-        });
-      });
-
-      opponentPlayer.socket.on("playerMoveFromClient", (data) => {
-        currentUser.socket.emit("playerMoveFromServer", {
-          ...data,
-        });
+      socket.on("disconnect", () => {
+        socket.to(roomId).emit("opponentLeftMatch");
       });
     } else {
-      currentUser.socket.emit("OpponentNotFound");
+      socket.emit("room_not_found");
     }
   });
 
-  socket.on("disconnect", function () {
-    const currentUser = allUsers[socket.id];
-    currentUser.online = false;
-    currentUser.playing = false;
-
-    for (let index = 0; index < allRooms.length; index++) {
-      const { player1, player2 } = allRooms[index];
-
-      if (player1.socket.id === socket.id) {
-        player2.socket.emit("opponentLeftMatch");
-        break;
-      }
-
-      if (player2.socket.id === socket.id) {
-        player1.socket.emit("opponentLeftMatch");
-        break;
-      }
+  socket.on("disconnect", () => {
+    const user = allUsers[socket.id];
+    if (user && user.roomId) {
+      socket.to(user.roomId).emit("opponentLeftMatch");
     }
+    delete allUsers[socket.id];
   });
 });
 

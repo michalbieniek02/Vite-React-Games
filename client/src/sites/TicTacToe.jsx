@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Square from "../components/Square";
 import { io } from "socket.io-client";
 import Swal from "sweetalert2";
-import '../styles/TicTacToe.scss'
-import { useNavigate } from "react-router-dom";
+import '../styles/TicTacToe.scss';
+import { useNavigate, useParams } from "react-router-dom";
 
 const renderFrom = [
   [1, 2, 3],
@@ -22,6 +22,7 @@ const TicTacToe = () => {
   const [opponentName, setOpponentName] = useState(null);
   const [playingAs, setPlayingAs] = useState(null);
   const navigate = useNavigate();
+  const { roomId } = useParams();
 
   const checkWinner = () => {
     for (let row = 0; row < gameState.length; row++) {
@@ -93,7 +94,7 @@ const TicTacToe = () => {
     setOpponentName(null);
     setPlayingAs(null);
     navigate('/tic-tac-toe');
-    location.reload();
+    window.location.reload();
   };
 
   const takePlayerName = async () => {
@@ -143,12 +144,31 @@ const TicTacToe = () => {
     });
 
     newSocket.on("OpponentFound", function (data) {
-      setPlayingAs(data.playingAs);
-      setOpponentName(data.opponentName);
+      setPlayingAs(data.player1.playerName === playerName ? "cross" : "circle");
+      setOpponentName(
+        data.player1.playerName === playerName ? data.player2.playerName : data.player1.playerName
+      );
+    });
+
+    newSocket.on("room_created", function (data) {
+      const roomLink = `${window.location.origin}/${data.roomId}`;
+      Swal.fire({
+        title: "Share this link with your friend to join the game",
+        text: roomLink,
+        customClass: {
+          container: 'my-swal-container'
+        },
+        input: "text",
+        inputValue: roomLink,
+        showCancelButton: true,
+        inputAttributes: {
+          readonly: true,
+        },
+      });
     });
   };
 
-  async function playOnlineClick() {
+  async function createRoom() {
     const result = await takePlayerName();
 
     if (!result.isConfirmed) {
@@ -163,18 +183,47 @@ const TicTacToe = () => {
     });
 
     handleSocketEvents(newSocket);
-    newSocket?.emit("request_to_play", {
+    newSocket.emit("create_room", {
       playerName: username,
     });
 
     setSocket(newSocket);
   }
 
+  async function joinRoom(roomId) {
+    const result = await takePlayerName();
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const username = result.value;
+    setPlayerName(username);
+
+    const newSocket = io("http://localhost:3000", {
+      autoConnect: true,
+    });
+
+    handleSocketEvents(newSocket);
+    newSocket.emit("join_room", {
+      playerName: username,
+      roomId: roomId,
+    });
+
+    setSocket(newSocket);
+  }
+
+  useEffect(() => {
+    if (roomId) {
+      joinRoom(roomId);
+    }
+  }, [roomId]);
+
   if (!playOnline) {
     return (
       <div className="main-div">
-        <button onClick={playOnlineClick} className="playOnline">
-          Play Online
+        <button onClick={createRoom} className="playOnline">
+          Create Room
         </button>
       </div>
     );
@@ -229,7 +278,7 @@ const TicTacToe = () => {
             })
           )}
         </div>
-        {finishedState &&
+        {finishedState &&   
           finishedState !== "opponentLeftMatch" &&
           finishedState !== "draw" && (
             <h3 className="finished-state">
