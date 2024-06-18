@@ -11,8 +11,8 @@ import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import io from 'socket.io-client';
 import MemoryGame from './sites/MemoryGame.jsx'
 
-// const socket = io.connect('http://localhost:3000');
-const socket = io.connect('https://8036-109-94-249-129.ngrok-free.app');
+const socket = io.connect('http://localhost:3000');
+// const socket = io.connect('https://8036-109-94-249-129.ngrok-free.app');
 
 function App() {
 
