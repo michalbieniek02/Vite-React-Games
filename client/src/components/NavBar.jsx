@@ -20,9 +20,6 @@ const NavBar = () => {
                 <Link to="/">Home</Link>
               </li>
               <li className='nav-link'>
-                <Link to="/tic-tac-toe">Tic Tac Toe</Link>
-              </li>
-              <li className='nav-link'>
                 <Link to="/memory">Memory</Link>
               </li>
             </ul>
