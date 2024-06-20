@@ -150,7 +150,6 @@ const Game = ({socket}) => {
   useEffect(()=>{
 
     socket.on('userLeave', (payload) => {
-      console.log("userLeave",payload);
       setLoadingValue('');
       setLoadingValue(`${oponentName} left the game`);
       setLoading(true);
@@ -193,7 +192,7 @@ const Game = ({socket}) => {
       </div>
 
       {loading ? <div className="loading">{loadingValue}</div>:null}
-      {userTurn ? <div className="loading">{`Wiating for oponent's response`}</div>:null}
+      {userTurn ? <div className="loading">{`Waiting for oponent's response`}</div>:null}
       {
         gameEnd?<div className="game-end">
           {!leaveRoom?<button onClick={handlePlayAgain} className='room-btn'>Play Again</button>:null}
