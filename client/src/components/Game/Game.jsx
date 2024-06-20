@@ -5,9 +5,7 @@ import './Game.scss'
 
 const moves = [{move:-1,myMove:false}, {move:-1,myMove:false}, {move:-1,myMove:false}, {move:-1,myMove:false}, {move:-1,myMove:false}, {move:-1,myMove:false}, {move:-1,myMove:false}, {move:-1,myMove:false} ,{move:-1,myMove:false},{move:-1,myMove:false}];
 
-
 const Game = ({socket}) => {
-
 
   useEffect(()=>{
 
@@ -23,11 +21,28 @@ const Game = ({socket}) => {
     window.addEventListener('popstate', function (event){
         window.history.pushState(null, document.title,  window.location.href);
     });
-
   })
 
   const params = useParams();
   const {user} = useSelector(state => state.user)
+  
+  const [gameState, setGameState] = useState({
+    roomId: "",
+    loading: true,
+    loadingValue: "waiting for another player...",
+    userJoined: false,
+    userTurn: false,
+    oponentName: '',
+    move: null,
+    allMoves: [],
+    winner: "",
+    winnerId: "",
+    winPattern: [],
+    gameEnd: false,
+    leaveRoom: false,
+    myScore: 0,
+    oponentScore: 0
+  });
   const [roomId, setRoomId] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingValue, setLoadingValue] = useState("waiting for another player...");
@@ -65,20 +80,16 @@ const Game = ({socket}) => {
   
   useEffect(() => {
     setRoomId(params.roomId);
-
   },[params.roomId]);
 
   const handleMoveClick = (m) => {
-
     if(loading && !userJoined){
       return;
     }
 
     socket.emit('move', {move:m, roomId, userId:user.userId});
-
     moves[m].move = 1;
     moves[m].myMove = true;
-
     setUserTurn(true);
   }
 
@@ -90,14 +101,12 @@ const Game = ({socket}) => {
     socket.on('move', (payload)=>{
       setMove({move:payload.move, myMove:payload.userId===user.userId});
       setAllMoves([...allMoves, move]);
-
       moves[payload.move].move = 1;
       moves[payload.move].myMove = payload.userId===user.userId;
 
       if(payload.userId!==user.userId){
         setUserTurn(false);
       }
-
     })
 
     socket.on('win', (payload)=>{
@@ -111,7 +120,6 @@ const Game = ({socket}) => {
         setWinner(`You lost!, ${payload.username} won!`);
         setOponentScore(oponentScore+1);
       }
-
       setWinnerId(payload.userId);
       setUserTurn(false);
     })
@@ -122,10 +130,7 @@ const Game = ({socket}) => {
       setUserTurn(false);
       setLoadingValue('')
     })
-
   })
-
-
 
   useEffect(()=>{
     socket.on('reMatch', ({currGameDetail}) => {
@@ -134,12 +139,9 @@ const Game = ({socket}) => {
         m.myMove=false;
       })
       setWinner('');
-
       setUserTurn(user.userId!==winnerId);
       setGameEnd(false);
-      
     })
-
     socket.on('removeRoom', (payload) => {
       setUserJoined(false);
       setLeaveRoom(true);
@@ -148,7 +150,6 @@ const Game = ({socket}) => {
   
 
   useEffect(()=>{
-
     socket.on('userLeave', (payload) => {
       setLoadingValue('');
       setLoadingValue(`${oponentName} left the game`);
@@ -180,15 +181,42 @@ const Game = ({socket}) => {
       }
 
       <div className="grid-container">
-        <div onClick={moves[1].move===-1&&!winner?()=>handleMoveClick(1):null} className={moves[1].move===-1?`grid-item-hover grid-item bottom right`: `grid-item bottom right`}>{moves[1].move!==-1?moves[1].myMove?'0':'X':null}</div>
-        <div onClick={moves[2].move===-1&&!winner?()=>handleMoveClick(2):null} className={moves[2].move===-1?`grid-item-hover grid-item bottom right`:'grid-item bottom right'}>{moves[2].move!==-1?moves[2].myMove?'0':'X':null}</div>
-        <div onClick={moves[3].move===-1&&!winner?()=>handleMoveClick(3):null} className={moves[3].move===-1?`grid-item-hover grid-item bottom`:` grid-item bottom`}>{moves[3].move!==-1?moves[3].myMove?'0':'X':null}</div>  
-        <div onClick={moves[4].move===-1&&!winner?()=>handleMoveClick(4):null} className={moves[4].move===-1?`grid-item-hover grid-item bottom right`:`grid-item bottom right`}>{moves[4].move!==-1?moves[4].myMove?'0':'X':null}</div>
-        <div onClick={moves[5].move===-1&&!winner?()=>handleMoveClick(5):null} className={moves[5].move===-1?`grid-item-hover grid-item bottom right`:`grid-item bottom right`}>{moves[5].move!==-1?moves[5].myMove?'0':'X':null}</div>
-        <div onClick={moves[6].move===-1&&!winner?()=>handleMoveClick(6):null} className={moves[6].move===-1?`grid-item-hover grid-item bottom`:`grid-item bottom`}>{moves[6].move!==-1?moves[6].myMove?'0':'X':null}</div>  
-        <div onClick={moves[7].move===-1&&!winner?()=>handleMoveClick(7):null} className={moves[7].move===-1?`grid-item-hover grid-item right`:`grid-item right`}>{moves[7].move!==-1?moves[7].myMove?'0':'X':null}</div>
-        <div onClick={moves[8].move===-1&&!winner?()=>handleMoveClick(8):null} className={moves[8].move===-1?`grid-item-hover grid-item right`:`grid-item right`}>{moves[8].move!==-1?moves[8].myMove?'0':'X':null}</div>
-        <div onClick={moves[9].move===-1&&!winner?()=>handleMoveClick(9):null} className={moves[9].move===-1?`grid-item-hover grid-item`:`grid-item`}>{moves[9].move!==-1?moves[9].myMove?'0':'X':null}</div>  
+        <div 
+          onClick={moves[1].move===-1&&!winner?()=>handleMoveClick(1):null} 
+          className={moves[1].move===-1?`grid-item-hover grid-item bottom right`: `grid-item bottom right`}>{moves[1].move!==-1?moves[1].myMove?'0':'X':null}
+        </div>
+        <div 
+          onClick={moves[2].move===-1&&!winner?()=>handleMoveClick(2):null} 
+          className={moves[2].move===-1?`grid-item-hover grid-item bottom right`:'grid-item bottom right'}>{moves[2].move!==-1?moves[2].myMove?'0':'X':null}
+        </div>
+        <div 
+          onClick={moves[3].move===-1&&!winner?()=>handleMoveClick(3):null} 
+          className={moves[3].move===-1?`grid-item-hover grid-item bottom`:` grid-item bottom`}>{moves[3].move!==-1?moves[3].myMove?'0':'X':null}
+        </div>  
+        <div 
+          onClick={moves[4].move===-1&&!winner?()=>handleMoveClick(4):null} 
+          className={moves[4].move===-1?`grid-item-hover grid-item bottom right`:`grid-item bottom right`}>{moves[4].move!==-1?moves[4].myMove?'0':'X':null}
+        </div>
+        <div 
+          onClick={moves[5].move===-1&&!winner?()=>handleMoveClick(5):null} 
+          className={moves[5].move===-1?`grid-item-hover grid-item bottom right`:`grid-item bottom right`}>{moves[5].move!==-1?moves[5].myMove?'0':'X':null}
+        </div>
+        <div 
+          onClick={moves[6].move===-1&&!winner?()=>handleMoveClick(6):null} 
+          className={moves[6].move===-1?`grid-item-hover grid-item bottom`:`grid-item bottom`}>{moves[6].move!==-1?moves[6].myMove?'0':'X':null}
+        </div>  
+        <div 
+          onClick={moves[7].move===-1&&!winner?()=>handleMoveClick(7):null} 
+          className={moves[7].move===-1?`grid-item-hover grid-item right`:`grid-item right`}>{moves[7].move!==-1?moves[7].myMove?'0':'X':null}
+        </div>
+        <div 
+          onClick={moves[8].move===-1&&!winner?()=>handleMoveClick(8):null} 
+          className={moves[8].move===-1?`grid-item-hover grid-item right`:`grid-item right`}>{moves[8].move!==-1?moves[8].myMove?'0':'X':null}
+        </div>
+        <div 
+          onClick={moves[9].move===-1&&!winner?()=>handleMoveClick(9):null} 
+          className={moves[9].move===-1?`grid-item-hover grid-item`:`grid-item`}>{moves[9].move!==-1?moves[9].myMove?'0':'X':null}
+        </div>  
       </div>
 
       {loading ? <div className="loading">{loadingValue}</div>:null}
@@ -196,13 +224,11 @@ const Game = ({socket}) => {
       {
         gameEnd?<div className="game-end">
           {!leaveRoom?<button onClick={handlePlayAgain} className='room-btn'>Play Again</button>:null}
-         
          <form onSubmit={handleClose} action="/">
           <button  className='room-btn'>Close</button>
          </form>
         </div>:null
       }
-      
     </div>
   )
 }

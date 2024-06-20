@@ -1,5 +1,5 @@
 import React from 'react'
-import '../styles/MobileFooter.scss'
+import './MobileFooter.scss'
 const MobileFooter = () => {
   return (
     <footer className="mobile-footer">

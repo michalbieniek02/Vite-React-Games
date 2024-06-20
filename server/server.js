@@ -1,16 +1,12 @@
 const app = require('express')();
 const dotenv = require('dotenv');
-
-dotenv.config({ path: './config.env' });
-
 const server = require('http').createServer(app);
-
 const io = require('socket.io')(server, {
     cors: {
         origin: "*"
-        //origin: "https://vite-react-games.vercel.app"
-      }
+    }
 })
+dotenv.config({ path: './config.env' });
 
 const {
     userJoin,
@@ -22,35 +18,23 @@ const {
     removeRoom
   } = require('./users');
 
-
 let rooms = [];
 
-
 io.on('connection', (socket)=>{
-
     socket.on('joinRoom', (payload)=>{
-
         addUser(socket.id, payload.roomId);
 
         const user = {socketId:socket.id, username:payload.username, roomId:payload.roomId};
-
         newGame(payload.roomId, payload.userId, payload.username);
-
         socket.join(user.roomId);
 
-
         const current_room = getGameDetail(user.roomId);
-
     })
 
     socket.on('joinExistingRoom', (payload)=>{
-
         addUser(socket.id, payload.roomId);
-
         const user = {socketId:socket.id, username:payload.username, roomId:payload.roomId};
-
         const roomExists = getGameDetail(payload.roomId);
-
         if(!roomExists){
             socket.emit('message', {error:'Room does not exist'});
             return;
@@ -60,17 +44,11 @@ io.on('connection', (socket)=>{
             socket.emit('message', {error:'Room is full'});
             return;
         }
-
+        
         socket.join(user.roomId);
-
         socket.emit('message', 'Welcome to ChatCord!');
-
-
         socket.to(payload.roomId).emit('userJoined',`${payload.username} has joined the chat`);
-
-
         return;
-
     })
 
     socket.on('usersEntered',(payload)=>{
@@ -135,29 +113,21 @@ io.on('connection', (socket)=>{
 
 
     socket.on('reMatch', (payload)=>{
-
         let currGameDetail = getGameDetail(payload.roomId);
 
         currGameDetail.user1.moves = [];
         currGameDetail.user2.moves = [];
-
         io.in(payload.roomId).emit('reMatch',{currGameDetail});
-
     })
 
 
     socket.on('removeRoom', (payload)=>{
-        
         io.in(payload.roomId).emit('removeRoom',("remove"));
-
         removeRoom(payload.roomId);
-
     })
 
     socket.on('disconnect', ()=>{
-
         const roomId = userLeft(socket.id);
-
         io.in(roomId).emit('userLeave',{roomId});
     })
 

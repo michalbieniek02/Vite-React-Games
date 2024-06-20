@@ -1,8 +1,8 @@
 import React from 'react'
-import "../styles/Footer.scss"
-import ig from "../assets/ig.png"
-import x from "../assets/x.png"
-import linked from "../assets/linked.png"
+import "./Footer.scss"
+import ig from "../../assets/ig.png"
+import x from "../../assets/x.png"
+import linked from "../../assets/linked.png"
 
 const Footer = () => {
   return (

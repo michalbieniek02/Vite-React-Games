@@ -13,7 +13,6 @@ const Home = () => {
   const [userName, setUserName] = useState('')
   const [show, setShow] = useState(false)
   const [error, setError]  = useState('');
-  const buttonRef = useRef(null)
 
   const dispatch = useDispatch();
 

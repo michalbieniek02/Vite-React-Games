@@ -3,10 +3,10 @@ import Home from './components/Home/Home';
 import CreateRoom from './components/CreateRoom/CreateRoom';
 import JoinRoom from './components/JoinRoom/JoinRoom';
 import Game from './components/Game/Game';
-import Footer from './components/Footer.jsx';
-import MobileFooter from './components/MobileFooter.jsx';
+import Footer from './components/Footer/Footer.jsx';
+import MobileFooter from './components/Footer/MobileFooter.jsx';
 import NotFound from './components/NotFound/NotFound';
-import NavBar from './components/NavBar.jsx'
+import NavBar from './components/Navbar/NavBar.jsx'
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import io from 'socket.io-client';
 import MemoryGame from './sites/MemoryGame.jsx'
