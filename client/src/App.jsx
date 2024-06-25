@@ -18,30 +18,25 @@ const socket = io.connect(import.meta.env.VITE_BACKEND_URL);
 
 function App() {
 
-  // const {user} = useSelector(state => state.user)
 
   return (
     <div className="App">
       <header className="App-header">
-
-    <Router>
-      <NavBar/>
-      <Routes>
-      <Route path='/' element={<Home />}></Route>
-        <Route path='/createRoom' element={<CreateRoom socket={socket}/>}></Route>
-        <Route path='/joinRoom' element={<JoinRoom socket={socket}/>}></Route>
-        <Route path='/game/:roomId' element={<Game socket={socket}/>}></Route>
-        <Route path="/memory" element={<MemoryGame/>}/>
-        <Route path='*' element={<NotFound />}></Route>
-      </Routes>
-    </Router>
-
-
+        <Router>
+          <NavBar/>
+          <Routes>
+          <Route path='/' element={<Home />}></Route>
+            <Route path='/createRoom' element={<CreateRoom socket={socket}/>}></Route>
+            <Route path='/joinRoom' element={<JoinRoom socket={socket}/>}></Route>
+            <Route path='/game/:roomId' element={<Game socket={socket}/>}></Route>
+            <Route path="/memory" element={<MemoryGame/>}/>
+            <Route path='*' element={<NotFound />}></Route>
+          </Routes>
+        </Router>
       </header>
       <footer>
-
-      <MobileFooter/>
-      <Footer/>
+        <MobileFooter/>
+        <Footer/>
       </footer>
     </div>
   );

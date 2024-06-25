@@ -35,10 +35,7 @@ function newGame (room, userId, username) {
   
   let isRoomExsist = gameDetail.find(item => item.room === room);
   if(!isRoomExsist) {
-    let newGameDetail = [];
-    newGameDetail = {room, user1:{userId , username, moves: [], winCount:0, inGame:false}, user2:{userId:0 , username:0, moves: [], winCount:0, inGame:false}};
-
-    gameDetail.push(newGameDetail);
+    gameDetail.push({room, user1:{userId , username, moves: [], winCount:0, inGame:false}, user2:{userId:0 , username:0, moves: [], winCount:0, inGame:false}});
   }
   else{
     if(isRoomExsist.user2.userId === 0 && isRoomExsist.user1.userId != userId){
@@ -71,15 +68,15 @@ function CheckWin(room, userId) {
   let gameDetail = getGameDetail(room);
 
   let user;
-  let curr_user_moves;
+  let currUserMoves;
   let winCount;
   if(gameDetail.user1.userId==userId){
     user = 1;
-    curr_user_moves = gameDetail.user1.moves;
+    currUserMoves = gameDetail.user1.moves;
   }
   else{
     user = 2;
-    curr_user_moves = gameDetail.user2.moves;
+    currUserMoves = gameDetail.user2.moves;
   }
 
   let pattern;
@@ -88,7 +85,7 @@ function CheckWin(room, userId) {
     let win_pattern = winPatterns[i];
     isWin = true;
     for(let j=0; j<win_pattern.length; j++){
-      if(!curr_user_moves.includes(win_pattern[j])){
+      if(!currUserMoves.includes(win_pattern[j])){
         isWin = false;
       }
     }

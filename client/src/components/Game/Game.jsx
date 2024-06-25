@@ -28,7 +28,7 @@ const Game = ({socket}) => {
   
   const [gameState, setGameState] = useState({
     roomId: "",
-    loading: true,
+    isLoading: true,
     loadingValue: "waiting for another player...",
     userJoined: false,
     userTurn: false,
@@ -44,7 +44,7 @@ const Game = ({socket}) => {
     oponentScore: 0
   });
   const [roomId, setRoomId] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [loadingValue, setLoadingValue] = useState("waiting for another player...");
   const [userJoined, setUserJoined] = useState(false);
   const [userTurn, setUserTurn] = useState(false);
@@ -73,7 +73,7 @@ const Game = ({socket}) => {
       else{
         setOponentName(data.user2.username)
       }
-      setLoading(false);
+      setIsLoading(false);
     })
 
   },[socket, user, params.roomId])
@@ -83,7 +83,7 @@ const Game = ({socket}) => {
   },[params.roomId]);
 
   const handleMoveClick = (m) => {
-    if(loading && !userJoined){
+    if(isLoading && !userJoined){
       return;
     }
 
@@ -152,8 +152,8 @@ const Game = ({socket}) => {
   useEffect(()=>{
     socket.on('userLeave', (payload) => {
       setLoadingValue('');
-      setLoadingValue(`${oponentName} left the game`);
-      setLoading(true);
+      setLoadingValue(`${oponentName} left the game.\n Go back to Home Page`);
+      setIsLoading(true);
       setUserJoined(false);
     })
   })
@@ -181,6 +181,7 @@ const Game = ({socket}) => {
       }
 
       <div className="grid-container">
+        
         <div 
           onClick={moves[1].move===-1&&!winner&&!userTurn?()=>handleMoveClick(1):null} 
           className={moves[1].move===-1?`grid-item-hover grid-item bottom right`: `grid-item bottom right`}>{moves[1].move!==-1?moves[1].myMove?'0':'X':null}
@@ -219,8 +220,8 @@ const Game = ({socket}) => {
         </div>  
       </div>
 
-      {loading ? <div className="loading">{loadingValue}</div>:null}
-      {userTurn ? <div className="loading">{`Waiting for oponent's response`}</div>:null}
+      {isLoading ? <div className="isLoading">{loadingValue}</div>:null}
+      {userTurn ? <div className="isLoading">{`Waiting for oponent's response`}</div>:null}
       {
         gameEnd?<div className="game-end">
           {!leaveRoom?<button onClick={handlePlayAgain} className='room-btn'>Play Again</button>:null}

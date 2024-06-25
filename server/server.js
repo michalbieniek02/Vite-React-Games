@@ -119,6 +119,8 @@ io.on('connection', (socket)=>{
         io.in(payload.roomId).emit('reMatch',{currGameDetail});
     })
 
+   
+   
 
     socket.on('removeRoom', (payload)=>{
         io.in(payload.roomId).emit('removeRoom',("remove"));

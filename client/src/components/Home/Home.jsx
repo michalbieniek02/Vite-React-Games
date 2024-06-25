@@ -11,7 +11,7 @@ const Home = () => {
   const userId = nanoid(5);
 
   const [userName, setUserName] = useState('')
-  const [show, setShow] = useState(false)
+  const [showInput, setShowInput] = useState(false)
   const [error, setError]  = useState('');
 
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const Home = () => {
 
     dispatch(addUser(userName, userId));
 
-    setShow(true);
+    setShowInput(true);
   }
 
   const handleKeyPress = (e) => {
@@ -43,7 +43,7 @@ const Home = () => {
       {error.length>0 ? <p className='error'>{error}</p>:null}
 
       {
-        !show ? <>
+        !showInput ? <>
         <input 
             value={userName} 
             onChange={(e)=>setUserName(e.target.value)} 
@@ -57,8 +57,8 @@ const Home = () => {
       }
 
       {
-        show &&
-        <div className="show">
+        showInput &&
+        <div className="showInput">
 
         <div className="room-btns">
           <Link  to="/createRoom">

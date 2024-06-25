@@ -3,11 +3,11 @@ import "./Navbar.scss"
 import {Link} from "react-router-dom"
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isNavOpen, setIsNavOpen] = useState(false)
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
-    console.log(isOpen);
+    setIsNavOpen(!isNavOpen);
+    console.log(isNavOpen);
   };
 
   return (
@@ -15,7 +15,7 @@ const NavBar = () => {
       <nav className='navbar'>
           <p className='nav-title'>React Games</p>
           <div className='nav-content' >
-            <ul className={`navbar-links ${isOpen ? 'open' : ''}`}>
+            <ul className={`navbar-links ${isNavOpen ? 'open' : ''}`}>
               <li className='nav-link'>
                 <Link to="/">Home</Link>
               </li>
@@ -26,11 +26,11 @@ const NavBar = () => {
           </div>
           <div className="nav-toggle" onClick={toggleMenu}>☰</div>
       </nav>
-      {isOpen?
+      {isNavOpen?
       <div className='mobile-nav-content' >
-        <Link to="/" onClick={()=>setIsOpen(false)}>Home</Link>
-        <Link to="/tic-tac-toe" onClick={()=>setIsOpen(false)}>Tic Tac Toe</Link>
-        <Link to="/memory" onClick={()=>setIsOpen(false)}>Memory</Link>
+        <Link to="/" onClick={()=>setIsNavOpen(false)}>Home</Link>
+        <Link to="/tic-tac-toe" onClick={()=>setIsNavOpen(false)}>Tic Tac Toe</Link>
+        <Link to="/memory" onClick={()=>setIsNavOpen(false)}>Memory</Link>
       </div> : ''}
     </>
   )
