@@ -9,7 +9,6 @@ const io = require('socket.io')(server, {
 dotenv.config({ path: './config.env' });
 
 const {
-    userJoin,
     getGameDetail,
     addUser,
     userLeft,
@@ -51,25 +50,25 @@ io.on('connection', (socket)=>{
         return;
     })
 
-    socket.on('usersEntered',(payload)=>{
+    socket.on('usersEntered', (payload) => {
         const current_game = getGameDetail(payload.roomId);
 
-        if(!current_game){
+        if (!current_game) {
             return;
         }
 
-        if(current_game.user1.userId === payload.userId){
+        if (current_game.user1.userId === payload.userId) {
             current_game.user1.inGame = true;
-        }
-        else if(current_game.user2.userId === payload.userId){
+            current_game.user1.symbol = 'O'; 
+        } else if (current_game.user2.userId === payload.userId) {
             current_game.user2.inGame = true;
+            current_game.user2.symbol = 'X'; 
         }
 
-        if(current_game.user1.inGame && current_game.user2.inGame){
-            io.in(payload.roomId).emit('usersEntered',{user1:current_game.user1, user2:current_game.user2});
+        if (current_game.user1.inGame && current_game.user2.inGame) {
+            io.in(payload.roomId).emit('usersEntered', { user1: current_game.user1, user2: current_game.user2 });
         }
-
-    })
+    });
     
     socket.on('move', async(payload)=>{
        

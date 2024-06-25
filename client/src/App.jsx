@@ -34,12 +34,15 @@ function App() {
         <Route path="/memory" element={<MemoryGame/>}/>
         <Route path='*' element={<NotFound />}></Route>
       </Routes>
-      <MobileFooter/>
-      <Footer/>
     </Router>
 
 
       </header>
+      <footer>
+
+      <MobileFooter/>
+      <Footer/>
+      </footer>
     </div>
   );
 }

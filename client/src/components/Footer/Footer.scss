@@ -4,13 +4,17 @@
     background-color: black;
     color: rgb(192, 192, 192);
     padding: 30px;
-
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
     
 
     .left-section{
         display: list-item;
         list-style-type: none;
-        margin-right: 50px;
+        max-width: 600px;
+        margin-right: 20%;    
     }
 
     .socials{
