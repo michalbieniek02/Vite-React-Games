@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './CreateRoom.scss';
 import { useUser } from '../../contexts/UserContext'; 
 import { nanoid } from 'nanoid';
+
 const CreateRoom = ({ socket }) => {
   const { user } = useUser(); 
 

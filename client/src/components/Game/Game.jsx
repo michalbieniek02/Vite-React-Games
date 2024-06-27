@@ -21,6 +21,7 @@ const Game = ({ socket }) => {
   const { user } = useUser();
   const navigate = useNavigate();
 
+const [moveCounter,setMoveCounter] = useState(0)
   const [hint, setHint] = useState('Whoever moves first is starting');
   const [roomId, setRoomId] = useState('');
   const [gameState, setGameState] = useState({
@@ -39,6 +40,10 @@ const Game = ({ socket }) => {
     myScore: 0,
     oponentScore: 0,
   });
+useEffect(()=>{
+  if(moveCounter>0) setHint("Good luck")
+    else setHint('Whoever moves first is starting')
+},[moveCounter])
 
   useEffect(() => {
     if (!user) {
@@ -72,13 +77,14 @@ const Game = ({ socket }) => {
     if (gameState.isLoading && !gameState.userJoined) return;
 
     socket.emit('move', { move: m, roomId, userId: user.userId });
+    setMoveCounter(moveCounter+1)
     moves[m].move = 1;
     moves[m].myMove = true;
     setGameState((prevState) => ({
       ...prevState,
       userTurn: true,
     }));
-    setHint('');
+    
   };
 
   const handlePlayAgain = () => {
