@@ -10,6 +10,10 @@ function getCurrentUser(id) {
   return users.find(user => user.id === id);
 }
 
+function findUserById(id){
+  return users.find(user => user.socketId ===id)
+ }
+
 function userLeave(id) {
   const index = users.findIndex(user => user.id === id);
 
@@ -115,11 +119,11 @@ function removeRoom(room) {
 
 
 function userLeft(socketId) {
-  if(!users.find(user=>user.socketId === socketId)){
+  if(!findUserById(socketId)){
     return;
   }
-  let roomId = users.find(user => user.socketId === socketId).roomId;
-  let index = users.findIndex(user => user.socketId === socketId);
+  let roomId = findUserById(socketId).roomId;
+  let index = findUserById(socketId)
   if(index !== -1){
     users.splice(index, 1)[0];
   }

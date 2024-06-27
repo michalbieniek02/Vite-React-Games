@@ -10,18 +10,15 @@ const CreateRoom = ({socket}) => {
 
   const { user} = useSelector((state) => state.user);
 
-  useEffect(()=>{
-    if(!user){
-      window.location.href = '/';
-    }
-  })
-
+  if(!user){
+    window.location.href = '/';
+  }
 
   useEffect(()=>{
     socket.emit('joinRoom', {username:user.userName, userId:user.userId, roomId});
   },[socket])
 
-  useEffect(()=>{
+  
     socket.on('message', (payload)=>{
       console.log(payload)
     })
@@ -29,7 +26,7 @@ const CreateRoom = ({socket}) => {
     socket.on('message', (message) => {
       console.log(message);
     });
-  })
+  
 
   return (
     <div className='create-room'>
