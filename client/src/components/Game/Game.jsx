@@ -63,8 +63,6 @@ const [moveCounter,setMoveCounter] = useState(0)
     });
   }, [socket, user, params.roomId]);
 
- 
-
   const handleMoveClick = (m) => {
     if (gameState.isLoading && !gameState.userJoined) return;
 
@@ -83,92 +81,97 @@ const [moveCounter,setMoveCounter] = useState(0)
     socket.emit('reMatch', { roomId });
   };
 
-  socket.on('move', (payload) => {
-    setGameState((prevState) => ({
-      ...prevState,
-      move: { move: payload.move, myMove: payload.userId === user.userId },
-      allMoves: [...gameState.allMoves, gameState.move],
-    }));
-    
-    moves[payload.move].move = 1;
-    moves[payload.move].myMove = payload.userId === user.userId;
-
-    if (payload.userId !== user.userId) {
+  useEffect(()=>{
+    socket.on('move', (payload) => {
       setGameState((prevState) => ({
         ...prevState,
+        move: { move: payload.move, myMove: payload.userId === user.userId },
+        allMoves: [...gameState.allMoves, gameState.move],
+      }));
+      
+      moves[payload.move].move = 1;
+      moves[payload.move].myMove = payload.userId === user.userId;
+  
+      if (payload.userId !== user.userId) {
+        setGameState((prevState) => ({
+          ...prevState,
+          userTurn: false,
+        }));
+      }
+    });
+  
+    socket.on('win', (payload) => {
+      setGameState((prevState) => ({
+        ...prevState,
+        winPattern: payload.pattern,
+        gameEnd: true,
+      }));
+      
+      if (payload.userId === user.userId) {
+        setGameState((prevState) => ({
+          ...prevState,
+          winner: 'You won!',
+          myScore: gameState.myScore + 1,
+        }));
+      } else {
+        setGameState((prevState) => ({
+          ...prevState,
+          winner: `You lost!, ${payload.username} won!`,
+          oponentScore: gameState.oponentScore + 1,
+        }));
+      }
+      setGameState((prevState) => ({
+        ...prevState,
+        winnerId: payload.userId,
         userTurn: false,
       }));
-    }
-  });
-
-  socket.on('win', (payload) => {
-    setGameState((prevState) => ({
-      ...prevState,
-      winPattern: payload.pattern,
-      gameEnd: true,
-    }));
-    
-    if (payload.userId === user.userId) {
-      setGameState((prevState) => ({
-        ...prevState,
-        winner: 'You won!',
-        myScore: gameState.myScore + 1,
-      }));
-    } else {
-      setGameState((prevState) => ({
-        ...prevState,
-        winner: `You lost!, ${payload.username} won!`,
-        oponentScore: gameState.oponentScore + 1,
-      }));
-    }
-    setGameState((prevState) => ({
-      ...prevState,
-      winnerId: payload.userId,
-      userTurn: false,
-    }));
-    
-  });
-
-  socket.on('draw', () => {
-    setGameState((prevState) => ({
-      ...prevState,
-      winner: 'Draw !',
-      gameEnd: true,
-      userTurn: false,
-      loadingValue: '',
-    }));
-  });
-
-  socket.on('reMatch', () => {
-    moves.forEach((m) => {
-      m.move = -1;
-      m.myMove = false;
+      
     });
-    setGameState((prevState) => ({
-      ...prevState,
-      winner: '', 
-      userTurn: user.userId !== gameState.winnerId,
-      gameEnd: false,
-    }));
-  });
+  
+    socket.on('draw', () => {
+      setGameState((prevState) => ({
+        ...prevState,
+        winner: 'Draw !',
+        gameEnd: true,
+        userTurn: false,
+        loadingValue: '',
+      }));
+    });
+  
+    socket.on('reMatch', () => {
+      moves.forEach((m) => {
+        m.move = -1;
+        m.myMove = false;
+      });
+      setGameState((prevState) => ({
+        ...prevState,
+        winner: '', 
+        userTurn: false,
+        
+        gameEnd: false,
+      }));
+    });
+  
+    socket.on('removeRoom', () => {
+      setGameState((prevState) => ({
+        ...prevState,
+        userJoined: false,
+        leaveRoom: true,
+      }));
+    });
+  
+    socket.on('userLeave', () => {
+      setGameState((prevState) => ({
+        ...prevState,
+        loadingValue: `${gameState.oponentName} left the game. Go back to Home Page`,
+        isLoading: true,
+        userJoined: false,
+      }));
+      navigate('/');
+    });
+  },[])
 
-  socket.on('removeRoom', () => {
-    setGameState((prevState) => ({
-      ...prevState,
-      userJoined: false,
-      leaveRoom: true,
-    }));
-  });
-
-  socket.on('userLeave', () => {
-    setGameState((prevState) => ({
-      ...prevState,
-      loadingValue: `${gameState.oponentName} left the game. Go back to Home Page`,
-      isLoading: true,
-      userJoined: false,
-    }));
-    navigate('/');
-  });
+  
 
   const handleClose = () => {
     socket.emit('removeRoom', { roomId });
