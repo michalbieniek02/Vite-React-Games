@@ -17,7 +17,6 @@ const {
     removeRoom
   } = require('./users');
 
-let rooms = [];
 
 io.on('connection', (socket)=>{
     socket.on('joinRoom', (payload)=>{
@@ -26,8 +25,6 @@ io.on('connection', (socket)=>{
         const user = {socketId:socket.id, username:payload.username, roomId:payload.roomId};
         newGame(payload.roomId, payload.userId, payload.username);
         socket.join(user.roomId);
-
-        const current_room = getGameDetail(user.roomId);
     })
 
     socket.on('joinExistingRoom', (payload)=>{
@@ -91,7 +88,6 @@ io.on('connection', (socket)=>{
             current_username = current_room.user2.username;
         }
 
-        
         io.in(payload.roomId).emit('move',{move:payload.move, userId:payload.userId});
 
         if(moveCount>=3){
@@ -110,7 +106,6 @@ io.on('connection', (socket)=>{
         }
     })
 
-
     socket.on('reMatch', (payload)=>{
         let currGameDetail = getGameDetail(payload.roomId);
 
@@ -118,9 +113,6 @@ io.on('connection', (socket)=>{
         currGameDetail.user2.moves = [];
         io.in(payload.roomId).emit('reMatch',{currGameDetail});
     })
-
-   
-   
 
     socket.on('removeRoom', (payload)=>{
         io.in(payload.roomId).emit('removeRoom',("remove"));
@@ -131,15 +123,11 @@ io.on('connection', (socket)=>{
         const roomId = userLeft(socket.id);
         io.in(roomId).emit('userLeave',{roomId});
     })
-
 })
-
-
 
 app.get('/', (req, res)=>{
     res.send('Server is running');
 })
-
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, ()=>{
