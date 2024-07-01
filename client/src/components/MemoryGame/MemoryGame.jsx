@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Stopwatch from '../components/Stopwatch';
-import '../styles/MemoryGame.scss';
+import Stopwatch from '../Stopwatch';
+import './MemoryGame.scss';
 
 const generateGrid = () => {
   const gridSize = 4;

@@ -7,7 +7,7 @@ import Home from './components/Home/Home';
 import CreateRoom from './components/CreateRoom/CreateRoom';
 import JoinRoom from './components/JoinRoom/JoinRoom';
 import Game from './components/Game/Game';
-import MemoryGame from './sites/MemoryGame.jsx';
+import MemoryGame from './components/MemoryGame/MemoryGame.jsx';
 import Footer from './components/Footer/Footer.jsx';
 import MobileFooter from './components/Footer/MobileFooter.jsx';
 import NotFound from './components/NotFound/NotFound';
