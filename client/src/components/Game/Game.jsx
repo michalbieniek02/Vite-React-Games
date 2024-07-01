@@ -111,13 +111,13 @@ const [moveCounter,setMoveCounter] = useState(0)
         setGameState((prevState) => ({
           ...prevState,
           winner: 'You won!',
-          myScore: gameState.myScore + 1,
+          myScore: prevState.myScore + 0.5,
         }));
       } else {
         setGameState((prevState) => ({
           ...prevState,
           winner: `You lost!, ${payload.username} won!`,
-          oponentScore: gameState.oponentScore + 1,
+          oponentScore: prevState.oponentScore + 0.5,
         }));
       }
       setGameState((prevState) => ({
