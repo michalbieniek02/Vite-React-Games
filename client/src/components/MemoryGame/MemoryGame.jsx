@@ -70,10 +70,11 @@ const MemoryGame = () => {
   };
 
   const resetGame = () => {
-    setGrid(generateGrid());
-    setSelected([]);
-    setStartTime(false);
-    setGameCompleted(false);
+    setGrid(generateGrid())
+    setSelected([])
+    setStartTime(false)
+    setGameCompleted(false)
+    window.location.reload()
   };
 
   return (

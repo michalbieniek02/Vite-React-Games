@@ -18,12 +18,10 @@ const moves = [
 
 const Game = ({ socket }) => {
   const params = useParams();
+  const roomId = params.roomId;
   const { user } = useUser();
   const navigate = useNavigate();
-
 const [moveCounter,setMoveCounter] = useState(0)
-  const [hint, setHint] = useState('Whoever moves first is starting');
-  const [roomId, setRoomId] = useState('');
   const [gameState, setGameState] = useState({
     isLoading: true,
     loadingValue: 'waiting for another player...',
@@ -40,10 +38,6 @@ const [moveCounter,setMoveCounter] = useState(0)
     myScore: 0,
     oponentScore: 0,
   });
-useEffect(()=>{
-  if(moveCounter>0) setHint("Good luck")
-    else setHint('Whoever moves first is starting')
-},[moveCounter])
 
   useEffect(() => {
     if (!user) {
@@ -69,9 +63,7 @@ useEffect(()=>{
     });
   }, [socket, user, params.roomId]);
 
-  useEffect(() => {
-    setRoomId(params.roomId);
-  }, [params.roomId]);
+ 
 
   const handleMoveClick = (m) => {
     if (gameState.isLoading && !gameState.userJoined) return;
@@ -95,11 +87,9 @@ useEffect(()=>{
     setGameState((prevState) => ({
       ...prevState,
       move: { move: payload.move, myMove: payload.userId === user.userId },
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       allMoves: [...gameState.allMoves, gameState.move],
     }));
+    
     moves[payload.move].move = 1;
     moves[payload.move].myMove = payload.userId === user.userId;
 
@@ -115,55 +105,36 @@ useEffect(()=>{
     setGameState((prevState) => ({
       ...prevState,
       winPattern: payload.pattern,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       gameEnd: true,
     }));
+    
     if (payload.userId === user.userId) {
       setGameState((prevState) => ({
         ...prevState,
         winner: 'You won!',
-      }));
-      setGameState((prevState) => ({
-        ...prevState,
         myScore: gameState.myScore + 1,
       }));
     } else {
       setGameState((prevState) => ({
         ...prevState,
         winner: `You lost!, ${payload.username} won!`,
-      }));
-      setGameState((prevState) => ({
-        ...prevState,
         oponentScore: gameState.oponentScore + 1,
       }));
     }
     setGameState((prevState) => ({
       ...prevState,
       winnerId: payload.userId,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       userTurn: false,
     }));
+    
   });
 
   socket.on('draw', () => {
     setGameState((prevState) => ({
       ...prevState,
       winner: 'Draw !',
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       gameEnd: true,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       userTurn: false,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       loadingValue: '',
     }));
   });
@@ -175,14 +146,8 @@ useEffect(()=>{
     });
     setGameState((prevState) => ({
       ...prevState,
-      winner: '',
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
+      winner: '', 
       userTurn: user.userId !== gameState.winnerId,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       gameEnd: false,
     }));
   });
@@ -191,9 +156,6 @@ useEffect(()=>{
     setGameState((prevState) => ({
       ...prevState,
       userJoined: false,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       leaveRoom: true,
     }));
   });
@@ -201,18 +163,8 @@ useEffect(()=>{
   socket.on('userLeave', () => {
     setGameState((prevState) => ({
       ...prevState,
-      loadingValue: '',
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       loadingValue: `${gameState.oponentName} left the game. Go back to Home Page`,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       isLoading: true,
-    }));
-    setGameState((prevState) => ({
-      ...prevState,
       userJoined: false,
     }));
     navigate('/');
@@ -226,7 +178,7 @@ useEffect(()=>{
   return (
     <div className="game">
       <h2>Tic Tac Toe</h2>
-      <p>{hint}</p>
+      <p>{moveCounter > 0 ? "Good luck" : "Whoever moves first is starting"}</p>
       <div className="score">
         <p>You: {gameState.myScore}</p>
         <p>{gameState.oponentName}: {gameState.oponentScore}</p>
