@@ -1,0 +1,6 @@
+steps:
+  - name: gcr.io/buildpacks/builder
+    args: ["pack", "build", "gcr.io/$PROJECT_ID/tic-tac-toe"]
+
+images:
+  - "gcr.io/$PROJECT_ID/tic-tac-toe"
