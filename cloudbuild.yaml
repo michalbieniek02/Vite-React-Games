@@ -7,4 +7,4 @@ images:
 
 options:
   logging:
-    logsBucket: gs://log-bucket-6969
+    cloudLogging: NONE
