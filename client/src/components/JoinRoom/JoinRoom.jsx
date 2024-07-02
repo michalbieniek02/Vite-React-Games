@@ -34,10 +34,11 @@ const JoinRoom = ({ socket }) => {
         setTimeout(() => {
           setError('');
         }, 4000);
-      } else {
-        setJoined(true);
+        return;
       }
-    });
+      setJoined(true);
+      }
+    );
   }, [socket, user]);
 
   return (

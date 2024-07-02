@@ -21,7 +21,7 @@ const Game = ({ socket }) => {
   const roomId = params.roomId;
   const { user } = useUser();
   const navigate = useNavigate();
-const [moveCounter,setMoveCounter] = useState(0)
+  const [moveCounter,setMoveCounter] = useState(0)
   const [gameState, setGameState] = useState({
     isLoading: true,
     loadingValue: 'waiting for another player...',
@@ -45,21 +45,22 @@ const [moveCounter,setMoveCounter] = useState(0)
     }
     socket.emit('usersEntered', { roomId: params.roomId, userId: user.userId });
     socket.off('usersEntered').on('usersEntered', (data) => {
+       setGameState((prevState) => ({
+        ...prevState,
+        isLoading: false,
+      }));
+      
       if (data.user1.userId !== user.userId) {
         setGameState((prevState) => ({
           ...prevState,
           oponentName: data.user1.username,
         }));
-      } else {
+        return
+      } 
         setGameState((prevState) => ({
           ...prevState,
           oponentName: data.user2.username,
         }));
-      }
-      setGameState((prevState) => ({
-        ...prevState,
-        isLoading: false,
-      }));
     });
   }, [socket, user, params.roomId]);
 
@@ -106,26 +107,25 @@ const [moveCounter,setMoveCounter] = useState(0)
         winPattern: payload.pattern,
         gameEnd: true,
       }));
-      
+
+      setGameState((prevState) => ({
+        ...prevState,
+        winnerId: payload.userId,
+        userTurn: false,
+      }));
       if (payload.userId === user.userId) {
         setGameState((prevState) => ({
           ...prevState,
           winner: 'You won!',
           myScore: prevState.myScore + 0.5,
         }));
-      } else {
-        setGameState((prevState) => ({
-          ...prevState,
-          winner: `You lost!, ${payload.username} won!`,
-          oponentScore: prevState.oponentScore + 0.5,
-        }));
+        return
       }
       setGameState((prevState) => ({
         ...prevState,
-        winnerId: payload.userId,
-        userTurn: false,
+        winner: `You lost!, ${payload.username} won!`,
+        oponentScore: prevState.oponentScore + 0.5,
       }));
-      
     });
   
     socket.on('draw', () => {
@@ -147,7 +147,6 @@ const [moveCounter,setMoveCounter] = useState(0)
         ...prevState,
         winner: '', 
         userTurn: false,
-        
         gameEnd: false,
       }));
     });

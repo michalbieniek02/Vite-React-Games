@@ -1,3 +1,5 @@
+const { log } = require("console");
+
 const users = [];
 const gameDetail = [];
 
@@ -40,18 +42,15 @@ function newGame (room, userId, username) {
   let isRoomExsist = gameDetail.find(item => item.room === room);
   if(!isRoomExsist) {
     gameDetail.push({room, user1:{userId , username, moves: [], winCount:0, inGame:false}, user2:{userId:0 , username:0, moves: [], winCount:0, inGame:false}});
+    return;
   }
-  else{
     if(isRoomExsist.user2.userId === 0 && isRoomExsist.user1.userId != userId){
       isRoomExsist.user2.userId = userId;
       isRoomExsist.user2.username = username;
+      return true;
     }
-    else{
       return false;
-    }
-  }
-
-  return true;
+    
 }
 
 function getGameDetail(room) {
@@ -61,7 +60,7 @@ function getGameDetail(room) {
 function addMove(room, userId, move) {
   let gameDetail = getGameDetail(room);
   if(gameDetail.users[0]==socket.id){
-
+    console.log("xd");
   }
   gameDetail.moves.push(move);
 }
@@ -71,18 +70,15 @@ const winPatterns = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,
 function CheckWin(room, userId) {
   let gameDetail = getGameDetail(room);
 
-  let user;
-  let currUserMoves;
+  let user = 2;
+  let currUserMoves = gameDetail.user2.moves;
   let winCount;
+  
   if(gameDetail.user1.userId==userId){
     user = 1;
     currUserMoves = gameDetail.user1.moves;
   }
-  else{
-    user = 2;
-    currUserMoves = gameDetail.user2.moves;
-  }
-
+  
   let pattern;
   let isWin;
   for(let i=0; i<winPatterns.length; i++){
@@ -98,11 +94,10 @@ function CheckWin(room, userId) {
       if(user===1){
         gameDetail.user1.winCount = gameDetail.user1.winCount +1;
         winCount = gameDetail.user1.winCount;
+        break;
       }
-      else{
-        gameDetail.user2.winCount = gameDetail.user2.winCount +1;
-        winCount = gameDetail.user1.winCount;
-      }
+      gameDetail.user2.winCount = gameDetail.user2.winCount +1;
+      winCount = gameDetail.user1.winCount;
       break;
     }
   }

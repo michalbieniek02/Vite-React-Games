@@ -22,30 +22,27 @@ const MemoryGame = () => {
   const [gameCompleted, setGameCompleted] = useState(false);
 
   useEffect(() => {
-    if (selected.length === 2) {
-      const [first, second] = selected;
-      if (grid[first].value === grid[second].value) {
+    if (selected.length !== 2) {
+      return
+    }
+    const [first, second] = selected;
+    if (grid[first].value === grid[second].value) {
+      setGrid((prevGrid) =>
+        prevGrid.map((cell, idx) =>
+          idx === first || idx === second ? { ...cell, matched: true } : cell
+        ));
+        
+    } else {
+      setTimeout(() => {
         setGrid((prevGrid) =>
           prevGrid.map((cell, idx) =>
-            idx === first || idx === second
-              ? { ...cell, matched: true }
-              : cell
-          )
-        );
-      } else {
-        setTimeout(() => {
-          setGrid((prevGrid) =>
-            prevGrid.map((cell, idx) =>
-              idx === first || idx === second
-                ? { ...cell, revealed: false }
-                : cell
-            )
-          );
-        }, 1000);
-      }
+            idx === first || idx === second ? { ...cell, revealed: false } : cell
+          ));
+      }, 1000);
+    }
       setTimeout(() => setSelected([]), 10); 
     }
-  }, [selected, grid]);
+  , [selected, grid]);
 
   useEffect(() => {
     if (grid.every(cell => cell.matched)) {
