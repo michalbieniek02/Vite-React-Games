@@ -21,9 +21,7 @@ const Home = () => {
       }, 4000);
       return;
     }
-
     login(userName, userId);
-
     setShowInput(true);
   };
 

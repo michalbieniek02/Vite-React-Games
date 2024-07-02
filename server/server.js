@@ -56,9 +56,9 @@ io.on('connection', (socket)=>{
 
         if (current_game.user1.userId === payload.userId) {
             current_game.user1.inGame = true;
-            current_game.user1.symbol = 'O'; 
+            current_game.user1.symbol = 'O';     
         } 
-        else if (current_game.user2.userId === payload.userId) {
+        if (current_game.user2.userId === payload.userId) {
             current_game.user2.inGame = true;
             current_game.user2.symbol = 'X'; 
         }
@@ -91,21 +91,21 @@ io.on('connection', (socket)=>{
 
         io.in(payload.roomId).emit('move',{move:payload.move, userId:payload.userId});
 
-        if(moveCount>=3){
-            const {isWin, winCount, pattern} = CheckWin(payload.roomId, payload.userId);
-
-            if(isWin){
-                
-                io.in(payload.roomId).emit('win',{userId:payload.userId, username:current_username, pattern});
-                return;
-            }
-
-            if(current_room.user1.moves.length + current_room.user2.moves.length >= 9){
-                io.in(payload.roomId).emit('draw', {roomId:payload.roomId});
-                return;
-            }
+        if(moveCount<3){
+            return
         }
-    })
+            
+        const {isWin, winCount, pattern} = CheckWin(payload.roomId, payload.userId);
+
+        if(isWin){
+            io.in(payload.roomId).emit('win',{userId:payload.userId, username:current_username, pattern});
+            return;
+        }
+        if(current_room.user1.moves.length + current_room.user2.moves.length >= 9){
+            io.in(payload.roomId).emit('draw', {roomId:payload.roomId});
+            return;
+        }
+    });
 
     socket.on('reMatch', (payload)=>{
         let currGameDetail = getGameDetail(payload.roomId);
