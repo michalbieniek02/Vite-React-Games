@@ -4,3 +4,7 @@ steps:
 
 images:
   - "gcr.io/$PROJECT_ID/tic-tac-toe"
+
+options:
+  logging:
+    logsBucket: gs://log-bucket-6969
