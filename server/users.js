@@ -1,5 +1,3 @@
-const { log } = require("console");
-
 const users = [];
 const gameDetail = [];
 
