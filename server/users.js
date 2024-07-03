@@ -1,4 +1,3 @@
-const { log } = require("console");
 
 const users = [];
 const gameDetail = [];
@@ -59,9 +58,6 @@ function getGameDetail(room) {
 
 function addMove(room, userId, move) {
   let gameDetail = getGameDetail(room);
-  if(gameDetail.users[0]==socket.id){
-    console.log("xd");
-  }
   gameDetail.moves.push(move);
 }
 

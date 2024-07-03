@@ -50,9 +50,7 @@ io.on('connection', (socket)=>{
     socket.on('usersEntered', (payload) => {
         const current_game = getGameDetail(payload.roomId);
 
-        if (!current_game) {
-            return;
-        }
+        if (!current_game) return;
 
         if (current_game.user1.userId === payload.userId) {
             current_game.user1.inGame = true;
@@ -91,9 +89,8 @@ io.on('connection', (socket)=>{
 
         io.in(payload.roomId).emit('move',{move:payload.move, userId:payload.userId});
 
-        if(moveCount<3){
-            return
-        }
+        if(moveCount<3) return
+        
             
         const {isWin, winCount, pattern} = CheckWin(payload.roomId, payload.userId);
 

@@ -166,7 +166,7 @@ const Game = ({ socket }) => {
         isLoading: true,
         userJoined: false,
       }));
-      navigate('/');
+      window.location.reload()
     });
   },[])
 
