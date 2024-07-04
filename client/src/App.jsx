@@ -13,6 +13,7 @@ import MobileFooter from './components/Footer/MobileFooter.jsx';
 import NotFound from './components/NotFound/NotFound';
 import io from 'socket.io-client';
 
+
 const socket = io.connect(import.meta.env.VITE_BACKEND_URL);
 
 function App() {
@@ -33,7 +34,6 @@ function App() {
       </header>
       <footer>
         <MobileFooter />
-        <Footer />
       </footer>
     </div>
   );
