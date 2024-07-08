@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Stopwatch from '../Stopwatch';
-import './MemoryGame.scss';
 
 const generateGrid = () => {
   const gridSize = 4;
@@ -23,7 +22,7 @@ const MemoryGame = () => {
 
   useEffect(() => {
     if (selected.length !== 2) {
-      return
+      return;
     }
     const [first, second] = selected;
     if (grid[first].value === grid[second].value) {
@@ -31,7 +30,6 @@ const MemoryGame = () => {
         prevGrid.map((cell, idx) =>
           idx === first || idx === second ? { ...cell, matched: true } : cell
         ));
-        
     } else {
       setTimeout(() => {
         setGrid((prevGrid) =>
@@ -40,9 +38,8 @@ const MemoryGame = () => {
           ));
       }, 1000);
     }
-      setTimeout(() => setSelected([]), 10); 
-    }
-  , [selected, grid]);
+    setTimeout(() => setSelected([]), 10); 
+  }, [selected, grid]);
 
   useEffect(() => {
     if (grid.every(cell => cell.matched)) {
@@ -67,21 +64,21 @@ const MemoryGame = () => {
   };
 
   const resetGame = () => {
-    setGrid(generateGrid())
-    setSelected([])
-    setStartTime(false)
-    setGameCompleted(false)
-    window.location.reload()
+    setGrid(generateGrid());
+    setSelected([]);
+    setStartTime(false);
+    setGameCompleted(false);
+    window.location.reload();
   };
 
   return (
-    <div className="memory-game-container">
+    <div className="flex flex-col items-center mt-5 mb-7 h-[784px]">
       <Stopwatch start={startTime} stop={gameCompleted} />
-      <div className="memory-game">
+      <div className="grid grid-cols-4 grid-rows-4 gap-2.5 justify-center">
         {grid.map((cell, index) => (
           <div
             key={index}
-            className={`cell ${cell.revealed || cell.matched ? 'revealed' : ''}`}
+            className={`flex justify-center items-center w-20 h-20 border border-gray-800 bg-gray-200 text-2xl cursor-pointer select-none ${cell.revealed || cell.matched ? 'bg-white cursor-default' : ''}`}
             onClick={() => handleClick(index)}
           >
             {cell.revealed || cell.matched ? cell.value : '?'}
@@ -89,7 +86,7 @@ const MemoryGame = () => {
         ))}
       </div>
       {gameCompleted && (
-        <button className="reset-button" onClick={resetGame}>
+        <button className="mt-5 px-5 py-2 text-lg cursor-pointer" onClick={resetGame}>
           Reset Game
         </button>
       )}

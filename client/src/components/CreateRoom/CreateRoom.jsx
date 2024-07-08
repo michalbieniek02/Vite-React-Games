@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
-import './CreateRoom.scss';
 import { useUser } from '../../contexts/UserContext'; 
 import { nanoid } from 'nanoid';
 
@@ -23,15 +22,15 @@ const CreateRoom = ({ socket }) => {
   });
 
   return (
-    <div className='create-room'>
-      <h2>Invite Friend</h2>
+    <div className='ml-[10%] max-w-screen-md:mx-[10%] mt-16 text-4xl '>
+      <h2 className='my-6'>Invite Friend</h2>
       <div className='create-room-container'>
-        <div className='url-container'>
-          <input value={roomId} className='name-input url-input' type='text' disabled={true} />
+        <div className='url-container '>
+          <input value={roomId} className='rounded name-input url-input p-6 bg-blue-200' type='text' disabled={true} />
         </div>
         <div className='go-to-game'>
           <Link to={`/game/${roomId}`}>
-            <button className='room-btn'>Play Game</button>
+            <button className='bg-black my-6 rounded-lg text-white py-2 px-4 text-sm font-bold cursor-pointer transition-all duration-200 ease-in-out hover:bg-transparent hover:text-black border-2 border-black'>Play Game</button>
           </Link>
         </div>
       </div>

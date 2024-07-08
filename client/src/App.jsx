@@ -8,11 +8,9 @@ import CreateRoom from './components/CreateRoom/CreateRoom';
 import JoinRoom from './components/JoinRoom/JoinRoom';
 import Game from './components/Game/Game';
 import MemoryGame from './components/MemoryGame/MemoryGame.jsx';
-import Footer from './components/Footer/Footer.jsx';
 import MobileFooter from './components/Footer/MobileFooter.jsx';
 import NotFound from './components/NotFound/NotFound';
 import io from 'socket.io-client';
-
 
 const socket = io.connect(import.meta.env.VITE_BACKEND_URL);
 
