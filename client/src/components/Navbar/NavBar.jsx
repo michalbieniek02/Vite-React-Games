@@ -12,9 +12,9 @@ const NavBar = () => {
   return (
     <>
       <nav className='flex  w-[100%] items-center content-center bg-black text-white font-normal p-5 text-2xl  '>
-          <p className='ml-3 md:ml-5 flex-nowrap'>React Games</p>
+          <p className='ml-3 lg:ml-[20%] text-xl '>React Games</p>
           <div className='ml-[50%]' >
-            <ul className={` hidden gap-7 list-none navbar-links ${isNavOpen ? 'open' : ''} md:flex`}>
+            <ul className={` hidden gap-7 list-none navbar-links ${isNavOpen ? 'open' : ''} lg:flex`}>
               <li className='hover:text-gray-300'>
                 <Link to="/">Home</Link>
               </li>
@@ -23,7 +23,7 @@ const NavBar = () => {
               </li>
             </ul>
           </div>
-          <div className="block absolute cursor-pointer ml-7 -translate-y-1 md:hidden text-5xl right-5" onClick={toggleMenu}>☰</div>
+          <div className="block absolute cursor-pointer ml-7 -translate-y-1 lg:hidden text-5xl right-5" onClick={toggleMenu}>☰</div>
       </nav>
       {isNavOpen?
       <div className='grid bg-black pt-7 pb-14 text-3xl content-center text-center border-t border-solid border-white gap-5 text-white cursor-pointer' >

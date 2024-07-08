@@ -188,7 +188,7 @@ const Game = ({ socket }) => {
     <div className="relative mb-[10px] max-w-[300px] h-[788px] mx-auto mt-16 text-center">
       <p className='text-[1rem]'>{moveCounter > 0 ? "Good luck" : "Whoever moves first is starting"}</p>
       <div className="text-[1rem]">
-        <p> {gameState.yourName}: {gameState.myScore} | {gameState.oponentName}: {gameState.oponentScore} </p>
+        <p>{gameState.yourName}: {gameState.myScore} | {gameState.oponentName}: {gameState.oponentScore}</p>
       </div>
       {gameState.winner && gameState.winner !== 'Draw !' && gameState.winner.length > 0 ? (
         <div className="winner">
