@@ -56,11 +56,9 @@ io.on('connection', (socket)=>{
 
         if (current_game.user1.userId === payload.userId) {
             current_game.user1.inGame = true;
-            current_game.user1.symbol = 'O';     
         } 
         if (current_game.user2.userId === payload.userId) {
             current_game.user2.inGame = true;
-            current_game.user2.symbol = 'X'; 
         }
 
         if (current_game.user1.inGame && current_game.user2.inGame) {

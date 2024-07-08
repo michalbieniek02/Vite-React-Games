@@ -26,6 +26,7 @@ const Game = ({ socket }) => {
     userJoined: false,
     userTurn: false,
     oponentName: '',
+    yourName:'',
     move: null,
     allMoves: [],
     winner: '',
@@ -35,6 +36,8 @@ const Game = ({ socket }) => {
     leaveRoom: false,
     myScore: 0,
     oponentScore: 0,
+    symbol: '',
+    enemySymbol:'',
   });
 
   useEffect(() => {
@@ -52,12 +55,18 @@ const Game = ({ socket }) => {
         setGameState((prevState) => ({
           ...prevState,
           oponentName: data.user1.username,
+          yourName: data.user2.username,
+          symbol: 'X',
+          enemySymbol:'O',
         }));
         return
       } 
         setGameState((prevState) => ({
           ...prevState,
           oponentName: data.user2.username,
+          yourName: data.user1.username,
+          symbol: 'O',
+          enemySymbol: 'X',
         }));
     });
   }, [socket, user, params.roomId]);
@@ -177,11 +186,9 @@ const Game = ({ socket }) => {
 
   return (
     <div className="relative mb-[10px] max-w-[300px] h-[788px] mx-auto mt-16 text-center">
-      <h2>Tic Tac Toe</h2>
       <p className='text-[1rem]'>{moveCounter > 0 ? "Good luck" : "Whoever moves first is starting"}</p>
       <div className="text-[1rem]">
-        <p>You: {gameState.myScore}</p>
-        <p>{gameState.oponentName}: {gameState.oponentScore}</p>
+        <p> {gameState.yourName}: {gameState.myScore} | {gameState.oponentName}: {gameState.oponentScore} </p>
       </div>
       {gameState.winner && gameState.winner !== 'Draw !' && gameState.winner.length > 0 ? (
         <div className="winner">
@@ -201,7 +208,7 @@ const Game = ({ socket }) => {
               onClick={move.move === -1 && !gameState.winner && !gameState.userTurn ? () => handleMoveClick(index) : null}
               className={move.move === -1 ? `hover:bg-[#00000007] ${className}` : className}
             >
-              {move.move !== -1 ? (move.myMove ? '0' : 'X') : null}
+              {move.move !== -1 ? (move.myMove ? gameState.symbol : gameState.enemySymbol) : null}
             </div>
           );
         })}

@@ -41,7 +41,7 @@ const JoinRoom = ({ socket }) => {
   }, [socket, user]);
 
   return (
-    <div className='flex flex-col ml-[45%] pt-16'>
+    <div className='flex flex-col pt-16 items-center text-center'>
       <h2>Join Game</h2>
         <div className=''>
           {error.length > 0 ? <p className='error'>{error}</p> : null}

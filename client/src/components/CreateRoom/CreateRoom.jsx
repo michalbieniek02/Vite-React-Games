@@ -22,11 +22,11 @@ const CreateRoom = ({ socket }) => {
   });
 
   return (
-    <div className='ml-[10%] max-w-screen-md:mx-[10%] mt-16 text-4xl '>
+    <div className=' mt-16 text-4xl  items-center text-center'>
       <h2 className='my-6'>Invite Friend</h2>
       <div className='create-room-container'>
         <div className='url-container '>
-          <input value={roomId} className='rounded name-input url-input p-6 bg-blue-200' type='text' disabled={true} />
+          <input value={roomId} className='rounded text-center p-6 bg-blue-200' type='text' disabled={true} />
         </div>
         <div className='go-to-game'>
           <Link to={`/game/${roomId}`}>

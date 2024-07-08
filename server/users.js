@@ -55,11 +55,8 @@ function getGameDetail(room) {
   return gameDetail.find(item => item.room === room)
 }
 
-function addMove(room, userId, move) {
+function addMove(room, move) {
   let gameDetail = getGameDetail(room);
-  if(gameDetail.users[0]==socket.id){
-    console.log("xd");
-  }
   gameDetail.moves.push(move);
 }
 
