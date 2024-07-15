@@ -23,7 +23,7 @@ const NavBar = () => {
               </li>
             </ul>
           </div>
-          <div className="block absolute cursor-pointer ml-7 -translate-y-1 lg:hidden text-5xl right-5" onClick={toggleMenu}>☰</div>
+          <div className={`block absolute cursor-pointer ml-7  lg:hidden right-5 ${isNavOpen? 'text-3xl -translate-x-5': 'text-6xl -translate-y-1'}`} onClick={toggleMenu}>{isNavOpen?'x':'☰'}</div>
       </nav>
       {isNavOpen?
       <div className='grid bg-black pt-7 pb-14 text-3xl content-center text-center border-t border-solid border-white gap-5 text-white cursor-pointer' >
