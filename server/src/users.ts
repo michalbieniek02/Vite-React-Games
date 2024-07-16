@@ -82,14 +82,10 @@ function addMove(room: string, move: number){
 }
 
 const winPatterns: number[][] = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 8, 9],
-  [1, 4, 7],
-  [2, 5, 8],
-  [3, 6, 9],
-  [1, 5, 9],
-  [3, 5, 7],
+  [0,1,2], [3,4,5],
+  [6,7,8], [0,3,6],
+  [1,4,7], [2,5,8],
+  [0,4,8], [2,4,6],
 ];
 
 function CheckWin(room:string, userId:string) {
@@ -98,7 +94,6 @@ function CheckWin(room:string, userId:string) {
     
   let user = 2;
   let currUserMoves = gameDetail.user2.moves;
-  let winCount = 0;
   
   if(gameDetail.user1.userId==userId){
     user = 1;
@@ -119,16 +114,14 @@ function CheckWin(room:string, userId:string) {
       pattern = i;
       if(user===1){
         gameDetail.user1.winCount = gameDetail.user1.winCount +1;
-        winCount = gameDetail.user1.winCount;
         break;
       }
       gameDetail.user2.winCount = gameDetail.user2.winCount +1;
-      winCount = gameDetail.user1.winCount;
       break;
     }
   }
 
-  return {isWin,winCount, pattern};
+  return {isWin, pattern};
 }
 
 function userLeft(socketId: string){

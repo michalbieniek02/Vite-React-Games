@@ -78,6 +78,14 @@ const Game = ({ socket }: { socket: any }) => {
     
     setMoveCounter(moveCounter + 1);
   };
+  const incrementScore = (player:boolean) =>{
+    if (player===true) {
+      gameState.myScore+=1
+      return
+    }
+    gameState.oponentScore=+1
+  }
+ 
 
   useEffect(() => {
     socket.on('move', (payload: any) => {
@@ -96,7 +104,11 @@ const Game = ({ socket }: { socket: any }) => {
     });
 
     socket.on('win', (payload: { pattern: number[]; userId: string; username: string }) => {
-      if (user) 
+      if (!user) return
+
+      if (payload.userId === user.userId)  incrementScore(true)
+      else incrementScore(false)
+      
       setGameState(prevState => ({
         ...prevState,
         winPattern: payload.pattern,
@@ -104,7 +116,6 @@ const Game = ({ socket }: { socket: any }) => {
         winnerId: payload.userId,
         userTurn: true,
         winner: payload.userId === user.userId ? 'You won!' : `You lost! ${payload.username} as ${gameState.symbol} won!`,
-        myScore: prevState.myScore-4
       }));
     });
 
@@ -158,18 +169,12 @@ const Game = ({ socket }: { socket: any }) => {
 
   return (
     <div className="relative mb-[10px] max-w-[300px] h-[788px] mx-auto mt-16 text-center">
-      <p className="text-[1rem]">{moveCounter > 0 ? 'Good luck' : 'Whoever moves first is starting'}</p>
       <div className="text-[1rem]">
         <p>
           {gameState.yourName}: {gameState.myScore} | {gameState.oponentName}: {gameState.oponentScore}
         </p>
       </div>
-      {gameState.winner && gameState.winner !== 'Draw!' && gameState.winner.length > 0 ? (
-        <div className="winner">
-          <h3>{gameState.winner}</h3>
-          <div className={`line p${gameState.winPattern} `}></div>
-        </div>
-      ) : null}
+     
       <div className="grid max-w-[280px] grid-cols-[auto_auto_auto] p-[10px] justify-center">
         {Array.from({ length: 9 }, (_, i) => {
           const className = `relative p-[30px] text-[24px] w-[60px] h-[60px] lg:w-[100px] lg:h-[100px] text-center text-black border-2 border-black`;
