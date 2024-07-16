@@ -17,7 +17,7 @@ const CreateRoom = ({ socket }) => {
     socket.emit('joinRoom', { username: user.userName, userId: user.userId, roomId });
   }, [socket, user]);
 
-  socket.on('message', (payload) => {
+  socket.on('message', (payload:any) => {
     console.log(payload);
   });
 

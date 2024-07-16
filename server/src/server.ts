@@ -1,3 +1,5 @@
+import { Request, Response } from 'express';
+import { Socket } from 'socket.io'
 const app = require('express')();
 const dotenv = require('dotenv');
 const server = require('http').createServer(app);
@@ -8,18 +10,11 @@ const io = require('socket.io')(server, {
 })
 dotenv.config({ path: './config.env' });
 
-const {
-    getGameDetail,
-    addUser,
-    userLeft,
-    newGame,
-    CheckWin,
-    removeRoom
-  } = require('./users');
+import { getGameDetail, addUser, userLeft, newGame, CheckWin} from './users';
 
 
-io.on('connection', (socket)=>{
-    socket.on('joinRoom', (payload)=>{
+io.on('connection', (socket:Socket)=>{
+    socket.on('joinRoom', (payload:any)=>{
         addUser(socket.id, payload.roomId);
 
         const user = {socketId:socket.id, username:payload.username, roomId:payload.roomId};
@@ -27,7 +22,7 @@ io.on('connection', (socket)=>{
         socket.join(user.roomId);
     })
 
-    socket.on('joinExistingRoom', (payload)=>{
+    socket.on('joinExistingRoom', (payload:any)=>{
         addUser(socket.id, payload.roomId);
         const user = {socketId:socket.id, username:payload.username, roomId:payload.roomId};
         const roomExists = getGameDetail(payload.roomId);
@@ -47,7 +42,7 @@ io.on('connection', (socket)=>{
         return;
     })
 
-    socket.on('usersEntered', (payload) => {
+    socket.on('usersEntered', (payload:any) => {
         const current_game = getGameDetail(payload.roomId);
 
         if (!current_game) return;
@@ -64,55 +59,51 @@ io.on('connection', (socket)=>{
         }
     });
     
-    socket.on('move', async(payload)=>{
+    socket.on('move', async(payload:any)=>{
        
         const current_room =  await getGameDetail(payload.roomId);
-        let current_username;
-        let moveCount;
+        let current_username:string;
+        let moveCount:number;
 
-        if(!current_room.user1.userId || !current_room.user2.userId){
+        if(!current_room!.user1.userId || !current_room!.user2.userId){
             io.in(payload.roomId).emit('userLeave',{});
         }
         
-        if(current_room.user1.userId == payload.userId){
-            current_room.user1.moves.push(payload.move);
-            moveCount = current_room.user1.moves.length;
-            current_username = current_room.user1.username;
+        if(current_room!.user1.userId == payload.userId){
+            current_room!.user1.moves.push(payload.move);
+            moveCount = current_room!.user1.moves.length;
+            current_username = current_room!.user1.username;
         }
         else {
-            current_room.user2.moves.push(payload.move);
-            moveCount = current_room.user2.moves.length;
-            current_username = current_room.user2.username;
+            current_room!.user2.moves.push(payload.move);
+            moveCount = current_room!.user2.moves.length;
+            current_username = current_room!.user2.username;
         }
 
         io.in(payload.roomId).emit('move',{move:payload.move, userId:payload.userId});
 
         if(moveCount<3) return
         
-            
-        const {isWin, winCount, pattern} = CheckWin(payload.roomId, payload.userId);
+        const winPayload = CheckWin(payload.roomId, payload.userId.toString());
+        if (!winPayload) return
+        let winPattern = winPayload.pattern
 
-        if(isWin){
-            io.in(payload.roomId).emit('win',{userId:payload.userId, username:current_username, pattern});
+        if (winPayload.isWin) {
+            io.in(payload.roomId).emit('win', { userId: payload.userId, username: current_username, winPattern });
             return;
-        }
-        if(current_room.user1.moves.length + current_room.user2.moves.length >= 9){
+          }
+        if(current_room!.user1.moves.length + current_room!.user2.moves.length >= 9){
             io.in(payload.roomId).emit('draw', {roomId:payload.roomId});
             return;
         }
     });
 
-    socket.on('reMatch', (payload)=>{
+    socket.on('reMatch', (payload:any)=>{
         let currGameDetail = getGameDetail(payload.roomId);
 
-        currGameDetail.user1.moves = [];
-        currGameDetail.user2.moves = [];
+        currGameDetail!.user1.moves = [];
+        currGameDetail!.user2.moves = [];
         io.in(payload.roomId).emit('reMatch',{currGameDetail});
-    })
-
-    socket.on('removeRoom', (payload)=>{
-        io.in(payload.roomId).emit('removeRoom',("remove"));
-        removeRoom(payload.roomId);
     })
 
     socket.on('disconnect', ()=>{
@@ -121,11 +112,11 @@ io.on('connection', (socket)=>{
     })
 })
 
-app.get('/', (req, res)=>{
+app.get('/', (req:Request, res:Response)=>{
     res.send('Server is running');
 })
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, ()=>{
-    console.log("server is running");
+    console.log(`Server is running on http://localhost:${PORT}`);
 })

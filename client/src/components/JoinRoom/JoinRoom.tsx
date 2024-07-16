@@ -18,7 +18,8 @@ const JoinRoom = ({ socket }) => {
       return;
     }
 
-    socket.emit('joinExistingRoom', { username: user.userName, userId: user.userId, roomId });
+    user? socket.emit('joinExistingRoom', { username: user.userName, userId: user.userId, roomId }) : console.log("cipa");
+  
   };
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const JoinRoom = ({ socket }) => {
       window.location.href = '/';
     }
 
-    socket.on('message', (payload) => {
+    socket.on('message', (payload:any) => {
       console.log(payload);
       if (payload.error) {
         setError(payload.error);

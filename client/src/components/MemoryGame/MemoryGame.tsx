@@ -16,7 +16,7 @@ const generateGrid = () => {
 
 const MemoryGame = () => {
   const [grid, setGrid] = useState(generateGrid);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState<number[]>([]);
   const [startTime, setStartTime] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
 
@@ -73,7 +73,7 @@ const MemoryGame = () => {
 
   return (
     <div className="flex flex-col items-center mt-5 mb-7 h-[784px]">
-      <Stopwatch start={startTime} stop={gameCompleted} />
+      <Stopwatch start={startTime} reset={gameCompleted} />
       <div className="grid grid-cols-4 grid-rows-4 gap-2.5 justify-center">
         {grid.map((cell, index) => (
           <div
