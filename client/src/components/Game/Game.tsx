@@ -7,7 +7,7 @@ type GameState = {
   loadingValue: string;
   userJoined: boolean;
   userTurn: boolean;
-  oponentName: string;
+  opponentName: string;
   yourName: string;
   move: { move: number; myMove: boolean } | null;
   allMoves: { move: number; myMove: boolean }[];
@@ -17,23 +17,23 @@ type GameState = {
   gameEnd: boolean;
   leaveRoom: boolean;
   myScore: number;
-  oponentScore: number;
+  opponentScore: number;
   symbol: string;
   enemySymbol: string;
+  lastWin: string
 };
 
 const Game = ({ socket }: { socket: any }) => {
   const params = useParams<{ roomId: string }>();
   const roomId = params.roomId!;
   const { user } = useUser();
-  const [moveCounter, setMoveCounter] = useState(0);
   const [moves, setMoves] = useState<{ move: number; myMove: boolean }[]>(Array(9).fill({ move: -1, myMove: false }));
   const [gameState, setGameState] = useState<GameState>({
     isLoading: true,
     loadingValue: 'waiting for another player...',
     userJoined: false,
     userTurn: false,
-    oponentName: '',
+    opponentName: '',
     yourName: '',
     move: null,
     allMoves: [],
@@ -43,9 +43,10 @@ const Game = ({ socket }: { socket: any }) => {
     gameEnd: false,
     leaveRoom: false,
     myScore: 0,
-    oponentScore: 0,
+    opponentScore: 0,
     symbol: '',
     enemySymbol: '',
+    lastWin:''
   });
 
   useEffect(() => {
@@ -62,7 +63,7 @@ const Game = ({ socket }: { socket: any }) => {
         isLoading: false,
         userJoined: true,
         userTurn: true,
-        oponentName: data.user1.userId !== user.userId ? data.user1.username : data.user2.username,
+        opponentName: data.user1.userId !== user.userId ? data.user1.username : data.user2.username,
         yourName: data.user1.userId === user.userId ? data.user1.username : data.user2.username,
         symbol: data.user1.userId === user.userId ? 'X' : 'O',
         enemySymbol: data.user1.userId !== user.userId ? 'X' : 'O',
@@ -72,20 +73,16 @@ const Game = ({ socket }: { socket: any }) => {
 
   const handleMoveClick = (index: number) => {
     if (gameState.isLoading || !gameState.userJoined || !gameState.userTurn || moves[index].move !== -1) return;
-
     socket.emit('move', { move: index, roomId, userId: user!.userId });
-    console.log(moves);
-    
-    setMoveCounter(moveCounter + 1);
   };
-  const incrementScore = (player:boolean) =>{
-    if (player===true) {
-      gameState.myScore+=1
-      return
-    }
-    gameState.oponentScore=+1
+
+  const incrementScore = (player: boolean) => {
+    setGameState(prevState => ({
+      ...prevState,
+      myScore: player ? prevState.myScore + 1 : prevState.myScore,
+      opponentScore: !player ? prevState.opponentScore + 1 : prevState.opponentScore
+    }));
   }
- 
 
   useEffect(() => {
     socket.on('move', (payload: any) => {
@@ -104,11 +101,8 @@ const Game = ({ socket }: { socket: any }) => {
     });
 
     socket.on('win', (payload: { pattern: number[]; userId: string; username: string }) => {
-      if (!user) return
+      if (!user) return;
 
-      if (payload.userId === user.userId)  incrementScore(true)
-      else incrementScore(false)
-      
       setGameState(prevState => ({
         ...prevState,
         winPattern: payload.pattern,
@@ -116,7 +110,8 @@ const Game = ({ socket }: { socket: any }) => {
         winnerId: payload.userId,
         userTurn: true,
         winner: payload.userId === user.userId ? 'You won!' : `You lost! ${payload.username} as ${gameState.symbol} won!`,
-      }));
+        lastWin:payload.userId === user.userId ?  gameState.yourName : payload.username
+      }))
     });
 
     socket.on('draw', () => {
@@ -150,7 +145,7 @@ const Game = ({ socket }: { socket: any }) => {
     socket.on('userLeave', () => {
       setGameState(prevState => ({
         ...prevState,
-        loadingValue: `${prevState.oponentName} left the game. Going back to Home Page`,
+        loadingValue: `${prevState.opponentName} left the game. Going back to Home Page`,
         isLoading: true,
         userJoined: false,
       }));
@@ -171,10 +166,12 @@ const Game = ({ socket }: { socket: any }) => {
     <div className="relative mb-[10px] max-w-[300px] h-[788px] mx-auto mt-16 text-center">
       <div className="text-[1rem]">
         <p>
-          {gameState.yourName}: {gameState.myScore} | {gameState.oponentName}: {gameState.oponentScore}
+          {gameState.symbol} {gameState.yourName} vs {gameState.opponentName} {gameState.enemySymbol}
         </p>
+         {gameState.lastWin!==''?
+         <p> Last winner: {gameState.lastWin}</p>:
+         <p>Good luck</p>}
       </div>
-     
       <div className="grid max-w-[280px] grid-cols-[auto_auto_auto] p-[10px] justify-center">
         {Array.from({ length: 9 }, (_, i) => {
           const className = `relative p-[30px] text-[24px] w-[60px] h-[60px] lg:w-[100px] lg:h-[100px] text-center text-black border-2 border-black`;
@@ -184,8 +181,7 @@ const Game = ({ socket }: { socket: any }) => {
             <div
               key={i}
               onClick={move.move === -1 && !gameState.winner && gameState.userTurn ? () => handleMoveClick(i) : undefined}
-              className={move.move === -1 ? `hover:bg-[#00000007] ${className}` : className}
-            >
+              className={move.move === -1 ? `hover:bg-[#00000007] ${className}` : className}>
               {move.move !== -1 ? (move.myMove ? gameState.symbol : gameState.enemySymbol) : null}
             </div>
           );
@@ -198,9 +194,8 @@ const Game = ({ socket }: { socket: any }) => {
           {!gameState.leaveRoom ? (
             <button
               onClick={handlePlayAgain}
-              className="bg-black my-2 rounded-lg text-white py-2 px-4 text-sm font-bold cursor-pointer transition-all duration-200 ease-in-out hover:bg-transparent hover:text-black border-2 border-black"
-            >
-              Play Again
+              className="bg-black my-2 rounded-lg text-white py-2 px-4 text-sm font-bold cursor-pointer transition-all duration-200 ease-in-out hover:bg-transparent hover:text-black border-2 border-black">
+                Play Again
             </button>
           ) : null}
           <form onSubmit={handleClose} action="/">
